@@ -16,7 +16,7 @@ import java.util.List;
 
 @Entity
 @Table(name="AUCTION_POST")
-public class AuctionPostEntity {
+public class AuctionPostEntity  extends BaseTimeEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

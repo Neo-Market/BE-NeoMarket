@@ -16,7 +16,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "USED_POST")
-public class UsedPostEntity {
+public class UsedPostEntity extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
