@@ -1,4 +1,4 @@
-package com.neo.neomarket.entity;
+package com.neo.neomarket.entity.mysql;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -12,20 +12,21 @@ import lombok.NoArgsConstructor;
 @Builder
 
 @Entity
-@Table(name = "PICTURE")
-public class PictureEntity {
+@Table(name = "WISH")
+public class WishEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String url;
-
     @ManyToOne
-    @JoinColumn(name = "action_post_id")
+    @JoinColumn(name = "auction_post_id", nullable = false)
     private AuctionPostEntity auctionPost;
 
     @ManyToOne
-    @JoinColumn(name = "used_post_id")
+    @JoinColumn(name = "user_post_id", nullable = false)
     private UsedPostEntity usedPost;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private UserEntity user;
 }

@@ -1,6 +1,6 @@
 package com.neo.neomarket.repository;
 
-import com.neo.neomarket.entity.UserEntity;
+import com.neo.neomarket.entity.mysql.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

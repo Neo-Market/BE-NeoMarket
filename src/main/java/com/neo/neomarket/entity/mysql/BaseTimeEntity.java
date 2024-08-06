@@ -1,4 +1,4 @@
-package com.neo.neomarket.entity;
+package com.neo.neomarket.entity.mysql;
 
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
