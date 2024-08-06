@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 
 @Getter
-@Document(indexName = "AuctionLog")
+@Document(indexName = "auction_log")
 public class AuctionLogEntity {
     @Id
     private Long id;
