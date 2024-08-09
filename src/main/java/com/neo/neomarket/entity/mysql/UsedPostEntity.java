@@ -1,17 +1,16 @@
 package com.neo.neomarket.entity.mysql;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
+@Getter
+@Setter
+@ToString
 @Builder
 
 @Entity
@@ -37,10 +36,10 @@ public class UsedPostEntity extends BaseTimeEntity {
     private Boolean deleted;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "usedPost")
-    List<PictureEntity> pictures = new ArrayList<>();
+    private final List<PictureEntity> pictures = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "usedPost")
-    List<WishEntity> wishes = new ArrayList<>();
+    private final List<WishEntity> wishes = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)

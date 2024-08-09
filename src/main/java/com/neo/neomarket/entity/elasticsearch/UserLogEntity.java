@@ -12,6 +12,10 @@ public class UserLogEntity {
     @Id
     private Long id;
 
+    private Long userId;
+
+    private Long exchangeAmount;
+
     private String payType;
 
     private String payStatus;
