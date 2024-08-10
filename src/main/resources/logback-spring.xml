@@ -14,8 +14,6 @@
 z
     <!-- Root Logger Configuration -->
     <root level="info">
-        <appender-ref ref="AUCTION_LOGSTASH" />
-        <appender-ref ref="USER_LOGSTASH" />
     </root>
 
     <!-- Logger for Auction Logs -->
