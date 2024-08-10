@@ -3,8 +3,10 @@ package com.neo.neomarket.entity.elasticsearch;
 import jakarta.persistence.Id;
 import lombok.Getter;
 import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 
 @Getter
@@ -13,13 +15,18 @@ public class AuctionLogEntity {
     @Id
     private Long id;
 
+    @Field(type = FieldType.Keyword)
+    private String payType;
+
+    @Field(type = FieldType.Long)
+    private Long exchangeAmount;
+
+    @Field(type = FieldType.Keyword)
+    private String payStatus;
+
+    @Field(type = FieldType.Long)
     private Long userId;
 
-    private Long postId;
-
-    private Long bidAmount;
-
-    private String product;
-
-    private LocalDateTime bidTime;
+    @Field(type = FieldType.Date, name = "@timestamp")
+    private Instant timestamp;
 }
