@@ -8,12 +8,18 @@ import java.time.LocalDateTime;
 
 
 @Getter
-@Document(indexName = "AuctionLog")
+@Document(indexName = "auction_log")
 public class AuctionLogEntity {
     @Id
     private Long id;
 
-    private Long bidPrice;
+    private Long userId;
+
+    private Long postId;
+
+    private Long bidAmount;
+
+    private String product;
 
     private LocalDateTime bidTime;
 }

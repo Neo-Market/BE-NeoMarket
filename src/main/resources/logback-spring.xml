@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!-- Auction Log Appender -->
+    <appender name="AUCTION_LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+        <destination>localhost:5044</destination>
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder" />
+    </appender>
+
+    <!-- User Log Appender -->
+    <appender name="USER_LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+        <destination>localhost:5050</destination>
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder" />
+    </appender>
+z
+    <!-- Root Logger Configuration -->
+    <root level="info">
+        <appender-ref ref="AUCTION_LOGSTASH" />
+        <appender-ref ref="USER_LOGSTASH" />
+    </root>
+
+    <!-- Logger for Auction Logs -->
+    <logger name="AuctionServiceLogger" level="info">
+        <appender-ref ref="AUCTION_LOGSTASH" />
+    </logger>
+
+    <!-- Logger for User Logs -->
+    <logger name="UserServiceLogger" level="info">
+        <appender-ref ref="USER_LOGSTASH" />
+    </logger>
+</configuration>
