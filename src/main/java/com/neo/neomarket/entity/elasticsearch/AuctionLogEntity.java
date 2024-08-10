@@ -13,7 +13,13 @@ public class AuctionLogEntity {
     @Id
     private Long id;
 
-    private Long bidPrice;
+    private Long userId;
+
+    private Long postId;
+
+    private Long bidAmount;
+
+    private String product;
 
     private LocalDateTime bidTime;
 }

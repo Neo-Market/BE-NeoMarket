@@ -24,5 +24,5 @@ public class ProductEntity {
     private Long transactionCount;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "product")
-    private List<AuctionPostEntity> auctionPosts = new ArrayList<>();
+    private final List<AuctionPostEntity> auctionPosts = new ArrayList<>();
 }
