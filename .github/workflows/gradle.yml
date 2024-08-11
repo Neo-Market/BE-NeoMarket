@@ -68,6 +68,10 @@ jobs:
             # 환경 변수 설정
             export DOCKER_REPO="${{ secrets.DOCKER_REPO }}"
             cd ~/
+            
+            # 기존 neomarket 컨테이너 중지 및 제거
+            docker stop neomarket || true
+            docker rm neomarket || true
 
             # 기존 컨테이너 중지 및 삭제
             docker-compose down
