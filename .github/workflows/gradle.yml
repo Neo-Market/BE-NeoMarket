@@ -65,9 +65,14 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            # 환경 변수 설정
-            export DOCKER_REPO="${{ secrets.DOCKER_REPO }}"
+            # 작업 디렉토리로 이동
             cd ~/
+          
+            # .env 파일 업데이트 또는 생성
+            echo "DOCKER_REPO=${{ secrets.DOCKER_REPO }}" > .env
+          
+            # .env 파일에서 환경 변수 로드
+            export $(grep -v '^#' .env | xargs)
             
             # 기존 neomarket 컨테이너 중지 및 제거
             docker stop neomarket || true
