@@ -46,10 +46,6 @@ public class AuctionPostEntity  extends BaseTimeEntity{
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
 
-    @ManyToOne
-    @JoinColumn(name = "product_id", nullable = false)
-    private ProductEntity product;
-
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "auctionPost")
     private final List<WishEntity> wishes =new ArrayList<>();
 
