@@ -2,13 +2,13 @@
 <configuration>
     <!-- Auction Log Appender -->
     <appender name="AUCTION_LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
-        <destination>localhost:5044</destination>
+        <destination>logstash:5044</destination>
         <encoder class="net.logstash.logback.encoder.LogstashEncoder" />
     </appender>
 
     <!-- User Log Appender -->
     <appender name="USER_LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
-        <destination>localhost:5050</destination>
+        <destination>logstash:5050</destination>
         <encoder class="net.logstash.logback.encoder.LogstashEncoder" />
     </appender>
 z
