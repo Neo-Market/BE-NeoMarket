@@ -65,8 +65,23 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            sudo docker rm -f $(sudo docker ps -qa)
-            sudo docker pull ${{ secrets.DOCKER_REPO }}:latest
-            sudo docker run -d -p 8080:8080 --name neomarket ${{ secrets.DOCKER_REPO }}:latest 
-            sudo docker image prune -f
+            echo "export DOCKER_REPO=${{ secrets.DOCKER_REPO }}" >> ~/.bashrc
+            source ~/.bashrc
+
+            # Docker Compose 파일이 없다면 다운로드
+            if [ ! -f docker-compose.yml ]; then
+              wget https://your-repo-url/docker-compose.yml
+            fi
+
+            # 기존 컨테이너 중지 및 삭제
+            sudo docker-compose down
+
+            # 최신 이미지 pull
+            sudo docker pull $DOCKER_REPO:latest
+
+            # Docker Compose로 서비스 시작
+            sudo -E docker-compose up -d
+
+            # 사용하지 않는 이미지와 볼륨 정리
+            sudo docker image prune -af
             sudo docker volume prune -f
