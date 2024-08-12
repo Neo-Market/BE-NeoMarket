@@ -49,11 +49,19 @@ public class UserEntity {
     private Long point;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user")
-    List<AuctionPostEntity> auctionPostEntities =new ArrayList<>();
+    private final List<AuctionPostEntity> auctionPostEntities =new ArrayList<>();
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user")
-    List<WishEntity> wishes =new ArrayList<>();
+    private final List<WishEntity> wishes =new ArrayList<>();
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user")
-    List<UsedPostEntity> usedPosts  =new ArrayList<>();
+    private final List<UsedPostEntity> usedPosts  =new ArrayList<>();
+
+    public void chargePoint(Long neoPoint){
+        this.point += neoPoint;
+    }
+
+    public void exchangePoint(Long neoPoint){
+        this.point -= neoPoint;
+    }
 }

@@ -1,17 +1,16 @@
 package com.neo.neomarket.entity.mysql;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
+@Getter
+@Setter
+@ToString
 @Builder
 
 @Entity
@@ -47,14 +46,10 @@ public class AuctionPostEntity  extends BaseTimeEntity{
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
 
-    @ManyToOne
-    @JoinColumn(name = "product_id", nullable = false)
-    private ProductEntity product;
-
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "auctionPost")
-    List<WishEntity> wishes =new ArrayList<>();
+    private final List<WishEntity> wishes =new ArrayList<>();
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "auctionPost")
-    List<PictureEntity> pictures = new ArrayList<>();
+    private final List<PictureEntity> pictures = new ArrayList<>();
 }
 
