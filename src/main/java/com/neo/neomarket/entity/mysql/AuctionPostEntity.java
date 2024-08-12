@@ -50,6 +50,6 @@ public class AuctionPostEntity  extends BaseTimeEntity{
     private final List<WishEntity> wishes =new ArrayList<>();
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "auctionPost")
-    private final List<PictureEntity> pictures = new ArrayList<>();
+    private final List<PictureEntity> pictures = new ArrayList<>(); //final인 이유?!
 }
 
