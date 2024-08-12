@@ -19,11 +19,11 @@ public class WishEntity {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "auction_post_id", nullable = false)
+    @JoinColumn(name = "auction_post_id", nullable = true)
     private AuctionPostEntity auctionPost;
 
     @ManyToOne
-    @JoinColumn(name = "user_post_id", nullable = false)
+    @JoinColumn(name = "user_post_id", nullable = true)
     private UsedPostEntity usedPost;
 
     @ManyToOne
