@@ -1,28 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
+    <!-- Console Appender -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
     <!-- Auction Log Appender -->
     <appender name="AUCTION_LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
         <destination>logstash:5044</destination>
         <encoder class="net.logstash.logback.encoder.LogstashEncoder" />
+        <keepAliveDuration>5 minutes</keepAliveDuration>
     </appender>
 
     <!-- User Log Appender -->
     <appender name="USER_LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
         <destination>logstash:5050</destination>
         <encoder class="net.logstash.logback.encoder.LogstashEncoder" />
+        <keepAliveDuration>5 minutes</keepAliveDuration>
     </appender>
-z
+
     <!-- Root Logger Configuration -->
     <root level="info">
+        <appender-ref ref="CONSOLE" />
     </root>
 
     <!-- Logger for Auction Logs -->
-    <logger name="AuctionServiceLogger" level="info">
+    <logger name="AuctionServiceLogger" level="info" additivity="false">
         <appender-ref ref="AUCTION_LOGSTASH" />
+        <appender-ref ref="CONSOLE" />
     </logger>
 
     <!-- Logger for User Logs -->
-    <logger name="UserServiceLogger" level="info">
+    <logger name="UserServiceLogger" level="info" additivity="false">
         <appender-ref ref="USER_LOGSTASH" />
+        <appender-ref ref="CONSOLE" />
     </logger>
 </configuration>

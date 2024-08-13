@@ -56,4 +56,12 @@ public class UserEntity {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user")
     private final List<UsedPostEntity> usedPosts  =new ArrayList<>();
+
+    public void chargePoint(Long neoPoint){
+        this.point += neoPoint;
+    }
+
+    public void exchangePoint(Long neoPoint){
+        this.point -= neoPoint;
+    }
 }
