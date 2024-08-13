@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -54,9 +55,9 @@ public class AuctionServiceImpl implements AuctionService {
                 .currentPrice(auctionPostEntity.getCurrentPrice())
                 .deadline(auctionPostEntity.getDeadline())
                 .category(auctionPostEntity.getCategory())
-//                .pictureUrls(auctionPostEntity.getPictures().stream()
-//                        .map(PictureEntity::getUrl)
-//                        .collect(Collectors.toList())) // 모든 사진 URL 리스트 추가
+                .pictureUrls(auctionPostEntity.getPictures().stream()
+                        .map(PictureEntity::getUrl)
+                        .collect(Collectors.toList())) // 모든 사진 URL 리스트 추가
                 .build();
     }
 
@@ -71,11 +72,20 @@ public class AuctionServiceImpl implements AuctionService {
                 .currentPrice(auctionPostDTO.getStartPrice()) // 현재 가격과 시작 가격 동일하게 설정
                 .deadline(auctionPostDTO.getDeadline())
                 .category(auctionPostDTO.getCategory())
-                //.pictureUrls(savedEntity.getPictures().stream()
-                        //.map(PictureEntity::getUrl)
-                        //.collect(Collectors.toList())) // 사진 URL 리스트로 변환
                 .build();
 
+        // PictureEntity 리스트 생성
+        if (auctionPostDTO.getPictureUrls() != null) {
+            for (String url : auctionPostDTO.getPictureUrls()) {
+                PictureEntity picture = PictureEntity.builder()
+                        .url(url)
+                        .auctionPost(auctionPostEntity) // 연결 설정
+                        .build();
+                auctionPostEntity.getPictures().add(picture); // 리스트에 추가
+            }
+        }
+
+        //게시글 저장
         auctionPostRepository.save(auctionPostEntity);
 
         return AuctionPostDTO.builder()
@@ -86,10 +96,12 @@ public class AuctionServiceImpl implements AuctionService {
                 .currentPrice(auctionPostEntity.getCurrentPrice())
                 .deadline(auctionPostEntity.getDeadline())
                 .category(auctionPostEntity.getCategory())
-                //.pictureUrls(auctionPostEntity.getPictures().stream()
-                //        .map(PictureEntity::getUrl)
-                //        .collect(Collectors.toList()))
+                .pictureUrls(auctionPostEntity.getPictures().stream()
+                        .map(PictureEntity::getUrl) // URL 리스트로 변환
+                        .collect(Collectors.toList()))
                 .build();
+
+
 
     }
 

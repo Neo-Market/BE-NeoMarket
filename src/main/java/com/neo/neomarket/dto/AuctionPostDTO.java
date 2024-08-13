@@ -20,6 +20,5 @@ public class AuctionPostDTO {
     private Long currentPrice;
     private String deadline;
     private String category;
-    //private List<String> pictureUrls;
 
 }
