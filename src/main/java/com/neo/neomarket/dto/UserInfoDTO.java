@@ -6,13 +6,15 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserDTO {
+public class UserInfoDTO {
 
-    private String nickname;
-
-    private String username;
+    private String name;
 
     private String email;
+
+    private String picture;
+
+    private String nickname;
 
     private String address;
 
