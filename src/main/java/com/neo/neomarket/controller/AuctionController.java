@@ -1,5 +1,6 @@
 package com.neo.neomarket.controller;
 
+import com.neo.neomarket.dto.AuctionPostCreateDTO;
 import com.neo.neomarket.dto.AuctionPostDTO;
 import com.neo.neomarket.service.AuctionService;
 import lombok.RequiredArgsConstructor;
@@ -33,11 +34,9 @@ public class AuctionController {
 
     //create
     @PostMapping("/auction")
-    public ResponseEntity<AuctionPostDTO> createAuction(@RequestBody AuctionPostDTO auctionPostDTO) {
-        auctionPostDTO.setStatus(0); // 기본 상태값을 0(활성)으로 설정
-
-        AuctionPostDTO createdPost = auctionService.createAuctionPost(auctionPostDTO);
-        return ResponseEntity.status(201).body(createdPost); // 201 Created 응답
+    public ResponseEntity<AuctionPostCreateDTO> createAuction(@RequestBody AuctionPostCreateDTO auctionPostCreateDTO) {
+        AuctionPostCreateDTO createdPost = auctionService.createAuctionPost(auctionPostCreateDTO);
+        return ResponseEntity.ok().body(createdPost);
     }
     //update
     @PutMapping("/auction/{id}")
