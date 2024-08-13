@@ -42,6 +42,11 @@ jobs:
           cd ${{ github.workspace }}/src/main/resources
           echo "${{ secrets.DB_CONFIG }}" > ./application-db.properties
 
+      - name: Make application-s3.properties
+        run: |
+          cd ${{ github.workspace }}/src/main/resources
+          echo "${{ secrets.S3_CONFIG }}" > ./application-s3.properties
+
       - name: Build with Gradle
         run: |
           chmod +x ./gradlew
