@@ -5,6 +5,8 @@ import com.neo.neomarket.dto.UserDTO;
 import com.neo.neomarket.dto.UserExchangeLogDTO;
 import com.neo.neomarket.dto.WishDTO;
 import com.neo.neomarket.entity.mysql.UserEntity;
+import com.neo.neomarket.exception.CustomException;
+import com.neo.neomarket.exception.ErrorCode;
 import com.neo.neomarket.repository.mysql.UserRepository;
 import com.neo.neomarket.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -29,11 +31,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<WishDTO> findWishAll(Long id) {
-        UserEntity user = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("user not found"));
+        UserEntity user = userRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_USER));
         List<WishDTO> wishes = new ArrayList<>();
         user.getWishes().forEach(wish -> {
             if (wish.getAuctionPost() == null && wish.getUsedPost() == null)
-                throw new IllegalStateException("Wishlist contains invalid data: No associated post found.");
+                throw new CustomException(ErrorCode.INCORRECT_DATA);
             String title = wish.getAuctionPost() == null ? wish.getUsedPost().getTitle() : wish.getAuctionPost().getTitle();
             WishDTO wishDTO = new WishDTO(wish.getId(), title);
             wishes.add(wishDTO);
@@ -44,7 +46,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO userInfo(Long id) {
-        UserEntity user = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("user not found"));
+        UserEntity user = userRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_USER));
 
         UserDTO userDTO = UserDTO.builder()
                 .point(user.getPoint())
@@ -61,7 +63,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void chargeNeoPay(ExchangeNeoPayDTO exchangeNeoPayDTO) {
-        UserEntity user = userRepository.findById(exchangeNeoPayDTO.getUserId()).orElseThrow(() -> new IllegalArgumentException("user not found"));
+        UserEntity user = userRepository.findById(exchangeNeoPayDTO.getUserId()).orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_USER));
         user.chargePoint(exchangeNeoPayDTO.getPoint());
         UserExchangeLogDTO exchangeLogDTO = UserExchangeLogDTO.builder()
                 .userId(user.getId())
@@ -87,7 +89,7 @@ public class UserServiceImpl implements UserService {
                     .build();
 
             recordExchangeLog(exchangeFailLogDTO);
-            //TODO: 잔액 부족 커스텀 예외
+            throw new CustomException(ErrorCode.INSUFFICIENT_BALANCE);
         }
 
         user.exchangePoint(exchangeNeoPayDTO.getPoint());
