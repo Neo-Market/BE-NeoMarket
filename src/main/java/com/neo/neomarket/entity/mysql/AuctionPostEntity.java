@@ -27,7 +27,12 @@ public class AuctionPostEntity  extends BaseTimeEntity{
     private String content;
 
     @Column(nullable = false)
-    private String status;
+    private int status = 0;
+
+    // 상태를 상수로 정의
+    public static final int STATUS_ACTIVE = 0; // 활성 상태
+    public static final int STATUS_INACTIVE = 1; // 비활성 상태
+    public static final int STATUS_CLOSED = 2; // 종료 상태
 
     private Long startPrice;
 
@@ -50,6 +55,6 @@ public class AuctionPostEntity  extends BaseTimeEntity{
     private List<WishEntity> wishes =new ArrayList<>();
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "auctionPost")
-    private List<PictureEntity> pictures = new ArrayList<>(); //final인 이유?!
+    private  List<PictureEntity> pictures = new ArrayList<>(); //final인 이유?!
 }
 

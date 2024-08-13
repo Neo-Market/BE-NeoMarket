@@ -11,7 +11,6 @@ import java.util.List;
 @NoArgsConstructor
 @Setter
 public class AuctionPostDTO {
-    private Long id;
     private String title;
     //private String pictureUrl;
     private List<String> pictureUrls;
@@ -20,5 +19,7 @@ public class AuctionPostDTO {
     private Long currentPrice;
     private String deadline;
     private String category;
+    private int status;
+    private Long userId;
 
 }

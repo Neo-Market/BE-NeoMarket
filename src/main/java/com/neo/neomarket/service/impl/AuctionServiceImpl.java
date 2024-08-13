@@ -4,6 +4,7 @@ import com.neo.neomarket.dto.AuctionPostDTO;
 import com.neo.neomarket.dto.BidLogDTO;
 import com.neo.neomarket.entity.mysql.AuctionPostEntity;
 import com.neo.neomarket.entity.mysql.PictureEntity;
+import com.neo.neomarket.entity.mysql.UserEntity;
 import com.neo.neomarket.repository.mysql.AuctionPostRepository;
 import com.neo.neomarket.service.AuctionService;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +36,7 @@ public class AuctionServiceImpl implements AuctionService {
 
         return auctionPostEntities.stream()
                 .map(entity -> AuctionPostDTO.builder()
-                        .id(entity.getId())
+
                         .title(entity.getTitle())
                         //.pictureUrl(entity.getPictures().isEmpty() ? null : entity.getPictures().get(0).getUrl()) // 첫 번째 이미지 URL 추가
                         .build())
@@ -48,7 +49,6 @@ public class AuctionServiceImpl implements AuctionService {
                .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다"));
 
         return AuctionPostDTO.builder()
-                .id(auctionPostEntity.getId())
                 .title(auctionPostEntity.getTitle())
                 .content(auctionPostEntity.getContent())
                 .startPrice(auctionPostEntity.getStartPrice())
@@ -62,17 +62,19 @@ public class AuctionServiceImpl implements AuctionService {
     }
 
 
-
     @Override
-    public AuctionPostDTO createAuctionPost(AuctionPostDTO auctionPostDTO){
+    public AuctionPostDTO createAuctionPost(AuctionPostDTO auctionPostDTO) {
         AuctionPostEntity auctionPostEntity = AuctionPostEntity.builder()
                 .title(auctionPostDTO.getTitle())
                 .content(auctionPostDTO.getContent())
                 .startPrice(auctionPostDTO.getStartPrice())
-                .currentPrice(auctionPostDTO.getStartPrice()) // 현재 가격과 시작 가격 동일하게 설정
+                .currentPrice(auctionPostDTO.getStartPrice())
                 .deadline(auctionPostDTO.getDeadline())
                 .category(auctionPostDTO.getCategory())
+                //.status("ACTIVE") // 초기값 설정해보기
+                .pictures(new ArrayList<>()) // 초기화
                 .build();
+
 
         // PictureEntity 리스트 생성
         if (auctionPostDTO.getPictureUrls() != null) {
@@ -85,11 +87,10 @@ public class AuctionServiceImpl implements AuctionService {
             }
         }
 
-        //게시글 저장
+        // 게시글 저장
         auctionPostRepository.save(auctionPostEntity);
 
-        return AuctionPostDTO.builder()
-                .id(auctionPostEntity.getId()) // 새로 생성된 ID 설정
+        AuctionPostDTO responseDto = AuctionPostDTO.builder()
                 .title(auctionPostEntity.getTitle())
                 .content(auctionPostEntity.getContent())
                 .startPrice(auctionPostEntity.getStartPrice())
@@ -103,7 +104,11 @@ public class AuctionServiceImpl implements AuctionService {
 
 
 
+        return responseDto;
     }
+
+
+
 
 
     @Override
@@ -132,7 +137,6 @@ public class AuctionServiceImpl implements AuctionService {
 
         // DTO로 변환하여 반환
         return AuctionPostDTO.builder()
-                .id(updatedEntity.getId())
                 .title(updatedEntity.getTitle())
                 .content(updatedEntity.getContent())
                 .currentPrice(updatedEntity.getCurrentPrice())
