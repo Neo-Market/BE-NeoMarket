@@ -9,14 +9,18 @@
 
     <!-- Auction Log Appender -->
     <appender name="AUCTION_LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+
         <destination>logstash:5044</destination>
+
         <encoder class="net.logstash.logback.encoder.LogstashEncoder" />
         <keepAliveDuration>5 minutes</keepAliveDuration>
     </appender>
 
     <!-- User Log Appender -->
     <appender name="USER_LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+
         <destination>logstash:5050</destination>
+
         <encoder class="net.logstash.logback.encoder.LogstashEncoder" />
         <keepAliveDuration>5 minutes</keepAliveDuration>
     </appender>
@@ -27,13 +31,18 @@
     </root>
 
     <!-- Logger for Auction Logs -->
-    <logger name="AuctionServiceLogger" level="info" additivity="false">
+
+    <logger name="AuctionServiceLogger" level="debug" additivity="false">
+
         <appender-ref ref="AUCTION_LOGSTASH" />
         <appender-ref ref="CONSOLE" />
     </logger>
 
     <!-- Logger for User Logs -->
-    <logger name="UserServiceLogger" level="info" additivity="false">
+
+    <logger name="UserServiceLogger" level="debug" additivity="false">
+
+
         <appender-ref ref="USER_LOGSTASH" />
         <appender-ref ref="CONSOLE" />
     </logger>
