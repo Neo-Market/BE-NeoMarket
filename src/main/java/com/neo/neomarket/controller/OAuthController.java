@@ -24,6 +24,7 @@ public class OAuthController {
     @Value("${spring.security.oauth2.client.registration.google.redirect-uri}")
     private String redirectUri;
 
+
     @GetMapping("/api/login")
     public void redirectToGoogleAuth(HttpServletResponse response) throws IOException {
         String authUrl = UriComponentsBuilder.fromHttpUrl("https://accounts.google.com/o/oauth2/v2/auth")
@@ -39,15 +40,5 @@ public class OAuthController {
         // 클라이언트를 구글 인증 페이지로 리디렉션
         response.sendRedirect(authUrl);
     }
-
-//    @GetMapping("/login/oauth2/code/google")
-//    public void googleCallback(@AuthenticationPrincipal OAuth2User principal, HttpServletResponse response)
-//            throws IOException {
-//        if (principal != null) {
-//            response.sendRedirect("/register");
-//        } else {
-//            response.sendRedirect("/login?error");
-//        }
-//    }
 
 }
