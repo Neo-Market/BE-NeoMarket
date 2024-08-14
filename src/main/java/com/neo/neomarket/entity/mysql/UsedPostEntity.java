@@ -26,14 +26,13 @@ public class UsedPostEntity extends BaseTimeEntity {
     @Column(nullable = false)
     private String content;
 
-    @Column(length = 2,nullable = false)
-    private String status;
-
+    @Column(nullable = false)
     private Long price;
 
-    private Long views;
+    @Builder.Default
+    @Column(nullable = false)
+    private Long views = 0L;
 
-    private Boolean deleted;
 
     private String category;
 
