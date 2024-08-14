@@ -3,12 +3,16 @@ package com.neo.neomarket.controller;
 import com.neo.neomarket.dto.AuctionPostCreateDTO;
 import com.neo.neomarket.dto.AuctionPostDTO;
 import com.neo.neomarket.service.AuctionService;
+import io.swagger.v3.oas.annotations.tags.Tag;
+>>>>>>> develop
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+@Tag(name = "Auction API", description = "Auction Controller")
 
 @RestController
 @RequiredArgsConstructor
