@@ -1,9 +1,9 @@
 package com.neo.neomarket.controller;
 
-import com.neo.neomarket.dto.request.AuctionPostCreateDTO;
-import com.neo.neomarket.dto.response.AuctionPostDTO;
-import com.neo.neomarket.dto.response.AuctionPostReadDTO;
-import com.neo.neomarket.dto.request.AuctionPostUpdateDTO;
+import com.neo.neomarket.dto.Auction.request.AuctionPostCreateDTO;
+import com.neo.neomarket.dto.Auction.request.response.AuctionPostDTO;
+import com.neo.neomarket.dto.Auction.request.response.AuctionPostReadDTO;
+import com.neo.neomarket.dto.Auction.request.AuctionPostUpdateDTO;
 import com.neo.neomarket.service.AuctionService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;

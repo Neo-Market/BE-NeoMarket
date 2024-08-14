@@ -1,10 +1,10 @@
 package com.neo.neomarket.service.impl;
 
 import com.neo.neomarket.dto.*;
-import com.neo.neomarket.dto.request.AuctionPostCreateDTO;
-import com.neo.neomarket.dto.request.AuctionPostUpdateDTO;
-import com.neo.neomarket.dto.response.AuctionPostDTO;
-import com.neo.neomarket.dto.response.AuctionPostReadDTO;
+import com.neo.neomarket.dto.Auction.request.AuctionPostCreateDTO;
+import com.neo.neomarket.dto.Auction.request.AuctionPostUpdateDTO;
+import com.neo.neomarket.dto.Auction.request.response.AuctionPostDTO;
+import com.neo.neomarket.dto.Auction.request.response.AuctionPostReadDTO;
 import com.neo.neomarket.entity.mysql.AuctionPostEntity;
 import com.neo.neomarket.entity.mysql.PictureEntity;
 import com.neo.neomarket.entity.mysql.UserEntity;
@@ -47,9 +47,18 @@ public class AuctionServiceImpl implements AuctionService {
 
         return auctionPostEntities.stream()
                 .map(entity -> AuctionPostDTO.builder()
-                        .id(entity.getId()) // id 필드 추가
+                        .id(entity.getId()) // ID 추가
                         .title(entity.getTitle())
-                        // .pictureUrl(entity.getPictures().isEmpty() ? null : entity.getPictures().get(0).getUrl()) // 첫 번째 이미지 URL 추가
+                        .content(entity.getContent()) // 내용 추가
+                        .startPrice(entity.getStartPrice()) // 시작 가격 추가
+                        .currentPrice(entity.getCurrentPrice()) // 현재 가격 추가
+                        .deadline(entity.getDeadline()) // 마감 기한 추가
+                        .category(entity.getCategory()) // 카테고리 추가
+                        .pictureUrls(entity.getPictures().stream()
+                                .map(PictureEntity::getUrl) // 사진 URL 추가
+                                .collect(Collectors.toList())) // URL 리스트 추가
+                        .userId(entity.getUser().getId()) // 사용자 ID 추가
+                        .status(entity.getStatus()) // 상태 추가
                         .build())
                 .collect(Collectors.toList());
     }
