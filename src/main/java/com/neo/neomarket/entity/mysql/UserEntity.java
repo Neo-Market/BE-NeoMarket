@@ -34,8 +34,9 @@ public class UserEntity {
     @Column(length = 20, nullable = false)
     private String nickname;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String role;
+    private Role role;
 
     private String address;
 
