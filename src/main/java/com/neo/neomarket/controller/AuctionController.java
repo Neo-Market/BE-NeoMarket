@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -24,7 +25,6 @@ public class AuctionController {
     // list read
     @GetMapping("/auction/list")
     public ResponseEntity<List<AuctionPostDTO>> getAuctionList() {
-
         List<AuctionPostDTO> auctionList = auctionService.getAuctionPosts(); // 서비스 호출
         return ResponseEntity.ok(auctionList); // 결과를 ResponseEntity로 반환
     }
@@ -38,15 +38,18 @@ public class AuctionController {
 
     //create
     @PostMapping("/auction")
-    public ResponseEntity<AuctionPostCreateDTO> createAuction(@RequestBody AuctionPostCreateDTO auctionPostCreateDTO) {
-        AuctionPostCreateDTO createdPost = auctionService.createAuctionPost(auctionPostCreateDTO);
+    public ResponseEntity<Long> createAuction(
+
+            @RequestParam("auctionPost") AuctionPostCreateDTO auctionPostCreateDTO,
+            @RequestParam("pictures") List<MultipartFile> pictures) {
+        Long createdPost = auctionService.createAuctionPost(auctionPostCreateDTO, pictures);
         return ResponseEntity.ok().body(createdPost);
     }
     //update
-    @PatchMapping("/auction/{id}")
-    public ResponseEntity<AuctionPostUpdateDTO> updateAuction(@PathVariable Long id, @RequestBody AuctionPostUpdateDTO auctionPostUpdateDTO) {
-        AuctionPostUpdateDTO updatedPost = auctionService.updateAuctionPost(id, auctionPostUpdateDTO);
-        return ResponseEntity.ok(updatedPost);
+    @PutMapping("/auction/{id}")
+    public ResponseEntity<Void> updateAuction(@PathVariable Long id, @RequestBody AuctionPostUpdateDTO auctionPostUpdateDTO) {
+        auctionService.updateAuctionPost(id, auctionPostUpdateDTO);
+        return ResponseEntity.ok().build();
     }
 
     //delete
@@ -55,4 +58,5 @@ public class AuctionController {
         auctionService.deleteAuctionPost(id);
         return ResponseEntity.noContent().build(); //성공적으로 삭제된 경우 204 No content 응답한다.
     }
+
 }
