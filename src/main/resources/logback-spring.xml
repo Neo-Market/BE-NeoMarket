@@ -19,7 +19,7 @@
     <!-- User Log Appender -->
     <appender name="USER_LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
 
-        <destination>3.38.115.168:5050</destination>
+        <destination>logstash:5050</destination>
 
         <encoder class="net.logstash.logback.encoder.LogstashEncoder" />
         <keepAliveDuration>5 minutes</keepAliveDuration>

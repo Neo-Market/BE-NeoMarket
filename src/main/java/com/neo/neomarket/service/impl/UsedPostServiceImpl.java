@@ -98,14 +98,6 @@ public class UsedPostServiceImpl implements UsedPostService {
         // 게시글을 ID로 조회합니다.
         UsedPostEntity uPost = usedPostRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_POST));
 
-        UsedPostEntity update = usedPostUpdateDTO.toEntity(
-                uPost.getId(),
-                usedPostUpdateDTO.getTitle(),
-                usedPostUpdateDTO.getContent(),
-                usedPostUpdateDTO.getPrice(),
-                usedPostUpdateDTO.getCategory()
-        );
-        usedPostRepository.save(update);
     }
 
     // 게시글 삭제
