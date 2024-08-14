@@ -26,12 +26,14 @@ public class UsedPostEntity extends BaseTimeEntity {
     @Column(nullable = false)
     private String content;
 
-    @Column(nullable = false)
+    @Column(length = 2,nullable = false)
+    private String status;
+
     private Long price;
 
-    @Builder.Default
-    @Column(nullable = false)
-    private Long views = 0L;
+    private Long views;
+
+    private Boolean deleted;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "usedPost")
     private final List<PictureEntity> pictures = new ArrayList<>();
