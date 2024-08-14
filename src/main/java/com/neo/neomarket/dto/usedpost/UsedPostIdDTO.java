@@ -22,13 +22,13 @@ public class UsedPostIdDTO {
 
     private Long price;
 
-    private Long userId;
-
-    private List<String> pictureUrls;
+    private String nickname;
 
     private LocalDateTime createTime;
 
     private Long views;
+
+    private String category;
 }
 
 

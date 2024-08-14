@@ -2,6 +2,7 @@ package com.neo.neomarket.service.impl;
 import com.neo.neomarket.dto.usedpost.UsedPostCreateDTO;
 import com.neo.neomarket.dto.usedpost.UsedPostDTO;
 import com.neo.neomarket.dto.usedpost.UsedPostIdDTO;
+import com.neo.neomarket.dto.usedpost.UsedPostUpdateDTO;
 import com.neo.neomarket.entity.mysql.PictureEntity;
 import com.neo.neomarket.entity.mysql.UsedPostEntity;
 import com.neo.neomarket.entity.mysql.UserEntity;
@@ -44,9 +45,9 @@ public class UsedPostServiceImpl implements UsedPostService {
                 .map(entity -> UsedPostDTO.builder()
                         .title(entity.getTitle())
                         .price(entity.getPrice())
-                        .userId(entity.getId())
-                        .pictures("entity.getPictures().get(0).getUrl()")
                         .createTime(entity.getCreatedDate())
+                        .category(entity.getCategory())
+                        .nickname(entity.getUser().getNickname())
                         .build())
                 .toList();
     }
@@ -56,7 +57,7 @@ public class UsedPostServiceImpl implements UsedPostService {
     public UsedPostIdDTO findPostById(Long id) {
         // 게시글을 ID로 조회합니다.
         UsedPostEntity findPost = usedPostRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_POST));
-
+        String nickname = findPost.getUser().getNickname();
         List<String> pictureUrls = new ArrayList<>();
         findPost.getPictures().forEach(pictureEntity -> pictureUrls.add(pictureEntity.getUrl()));
 
@@ -64,10 +65,10 @@ public class UsedPostServiceImpl implements UsedPostService {
                 .title(findPost.getTitle())
                 .content(findPost.getContent())
                 .price(findPost.getPrice())
-                .userId(findPost.getUser().getId())
-                .pictureUrls(pictureUrls)
+                .nickname(nickname)
                 .createTime(findPost.getCreatedDate())
                 .views(findPost.getViews())
+                .category(findPost.getCategory())
                 .build();
 
         return usedPostIdDTO;
@@ -81,8 +82,10 @@ public class UsedPostServiceImpl implements UsedPostService {
         // DTO를 Entity로 변환
         UsedPostEntity usedPostEntity = UsedPostEntity.builder()
                 .title(usedPostCreateDTO.getTitle())
+                .category(usedPostCreateDTO.getCategory())
                 .content(usedPostCreateDTO.getContent())
                 .price(usedPostCreateDTO.getPrice())
+                .status(usedPostCreateDTO.getStatus())
                 .user(user)
                 .build();
 
@@ -90,71 +93,52 @@ public class UsedPostServiceImpl implements UsedPostService {
         UsedPostEntity create = usedPostRepository.save(usedPostEntity);
 
         // 저장된 Entity를 다시 DTO로 변환하여 반환
-        return UsedPostCreateDTO.builder()
+        UsedPostCreateDTO CreateDTO = UsedPostCreateDTO.builder()
                 .title(create.getTitle())
+                .category(create.getCategory())
                 .content(create.getContent())
                 .price(create.getPrice())
+                .userId(create.getUser().getId())
+                .status(create.getStatus())
                 .build();
+
+        return CreateDTO;
     }
 
     // 게시글 수정
     @Override
-    public UsedPostDTO updatePost(Long id, UsedPostDTO usedPostDTO) {
+    public UsedPostUpdateDTO updatePost(Long id, UsedPostUpdateDTO usedPostUpdateDTO) {
         // 게시글을 ID로 조회합니다.
-        UsedPostEntity upost = usedPostRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("post not found"));
+        UsedPostEntity upost = usedPostRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_POST));
 
         // 게시글이 존재하는 경우, 업데이트할 필드를 설정합니다.
-        upost.setTitle(usedPostDTO.getTitle());
-//        upost.setContent(usedPostDTO.getContent());
-//        post.setStatus(usedPostDTO.getStatus());
-        upost.setPrice(usedPostDTO.getPrice());
+        upost.setTitle(usedPostUpdateDTO.getTitle());
+        upost.setCategory(usedPostUpdateDTO.getCategory());
+        upost.setContent(usedPostUpdateDTO.getContent());
+        upost.setPrice(usedPostUpdateDTO.getPrice());
+        upost.setStatus(usedPostUpdateDTO.getStatus());
 
         // 업데이트된 게시글을 저장합니다.
         UsedPostEntity updatedPost = usedPostRepository.save(upost);
 
         // Entity를 DTO로 변환하여 반환합니다.
-        return UsedPostDTO.builder()
+        UsedPostUpdateDTO UpdatDTO = UsedPostUpdateDTO.builder()
                 .title(updatedPost.getTitle())
-//                .content(updatedPost.getContent())
+                .category(updatedPost.getCategory())
+                .content(updatedPost.getContent())
                 .price(updatedPost.getPrice())
+                .status(updatedPost.getStatus())
                 .build();
+
+        return UpdatDTO;
     }
 
     // 게시글 삭제
     @Override
     public void deletePost(Long id) {
+        if(!usedPostRepository.existsById(id)){
+            throw new RuntimeException("게시물이 없습니다.");
+        }
         usedPostRepository.deleteById(id);
     }
-
-//    // 게시글을 wish에 저장하는 메소드
-//    @Override
-//    public void addWishToPost(UsedWishDTO usedWishDTO) {
-//        UsedPostEntity post = usedPostRepository.findById(usedWishDTO.getPostId())
-//                .orElseThrow(() -> new EntityNotFoundException("Post not found with id " + usedWishDTO.getPostId()));
-//        UserEntity user = userRepository.findById(usedWishDTO.getUserId())
-//                .orElseThrow(() -> new EntityNotFoundException("User not found with id " + usedWishDTO.getUserId()));
-//
-//        // 중복 체크
-//        if (wishRepository.findByUsedPostIdAndUserId(UsedWishDTO usedWishDTO).isPresent()) {
-//            throw new IllegalStateException("Wish already exists for postId " + usedWishDTO.getPostId() + " and userId " + usedWishDTO.getUserId());
-//
-//        }
-//
-//        // WishEntity 생성 및 저장
-//        WishEntity wish = WishEntity.builder()
-//                .usedPost(post)
-//                .user(user)
-//                .build();
-//        wishRepository.save(wish);
-//    }
-//
-//    // 게시글의 wish를 삭제하는 메소드
-//    @Override
-//    public void removeWishFromPost(UsedWishDTO usedWishDTO) {
-//        if (wishRepository.findByUsedPostIdAndUserId(usedWishDTO.getPostId(), usedWishDTO.getUserId()).isEmpty()) {
-//            throw new EntityNotFoundException("Wish not found for postId " + usedWishDTO.getPostId() + " and userId " + usedWishDTO.getUserId());
-//        }
-//        wishRepository.deleteByUsedPostIdAndUserId(UsedWishDTO usedWishDTO);
-//    }
-
 }

@@ -16,7 +16,10 @@ public class UsedPostDTO  {
 
     private String pictures;
 
-    private Long userId;
+    private String nickname;
 
     private LocalDateTime createTime;
+
+    private String category;
+
 }
