@@ -26,7 +26,6 @@ import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
 public class UsedPostServiceImpl implements UsedPostService {
 
     private final UsedPostRepository usedPostRepository;
-    private final WishRepository wishRepository;
     private final UserRepository userRepository;
     private final PictureRepository pictureRepository;
 
@@ -34,7 +33,6 @@ public class UsedPostServiceImpl implements UsedPostService {
     public List<UsedPostDTO> getUsedPosts() {
         // 전체 게시글을 조회
         List<UsedPostEntity> usedPostEntities = usedPostRepository.findAll();
-
         // 게시글이 없으면 예외 발생
         if (usedPostEntities.isEmpty()) {
             return List.of();
@@ -100,15 +98,14 @@ public class UsedPostServiceImpl implements UsedPostService {
         // 게시글을 ID로 조회합니다.
         UsedPostEntity uPost = usedPostRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_POST));
 
-        // 게시글이 존재하는 경우, 업데이트할 필드를 설정합니다.
-        uPost.setTitle(usedPostUpdateDTO.getTitle());
-        uPost.setCategory(usedPostUpdateDTO.getCategory());
-        uPost.setContent(usedPostUpdateDTO.getContent());
-        uPost.setPrice(usedPostUpdateDTO.getPrice());
-
-        // 업데이트된 게시글을 저장합니다.
-        usedPostRepository.save(uPost);
-
+        UsedPostEntity update = usedPostUpdateDTO.toEntity(
+                uPost.getId(),
+                usedPostUpdateDTO.getTitle(),
+                usedPostUpdateDTO.getContent(),
+                usedPostUpdateDTO.getPrice(),
+                usedPostUpdateDTO.getCategory()
+        );
+        usedPostRepository.save(update);
     }
 
     // 게시글 삭제
