@@ -1,0 +1,22 @@
+package com.neo.neomarket.dto.usedpost;
+
+import lombok.*;
+
+import java.time.LocalDateTime;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+// 전체 게시물 조회 DTO
+public class UsedPostDTO  {
+    private String title;
+
+    private long price;
+
+    private String pictures;
+
+    private Long userId;
+
+    private LocalDateTime createTime;
+}
