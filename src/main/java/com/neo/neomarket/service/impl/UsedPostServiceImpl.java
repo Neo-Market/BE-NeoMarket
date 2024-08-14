@@ -1,15 +1,24 @@
 package com.neo.neomarket.service.impl;
-import com.neo.neomarket.dto.UsedPostDTO;
+import com.neo.neomarket.dto.usedpost.UsedPostCreateDTO;
+import com.neo.neomarket.dto.usedpost.UsedPostDTO;
+import com.neo.neomarket.dto.usedpost.UsedPostIdDTO;
+import com.neo.neomarket.entity.mysql.PictureEntity;
 import com.neo.neomarket.entity.mysql.UsedPostEntity;
+import com.neo.neomarket.entity.mysql.UserEntity;
+import com.neo.neomarket.exception.CustomException;
+import com.neo.neomarket.exception.ErrorCode;
+import com.neo.neomarket.repository.mysql.PictureRepository;
 import com.neo.neomarket.repository.mysql.UsedPostRepository;
+import com.neo.neomarket.repository.mysql.UserRepository;
 import com.neo.neomarket.repository.mysql.WishRepository;
 import com.neo.neomarket.service.UsedPostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+
+import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
 
 @RequiredArgsConstructor
 @Service
@@ -17,7 +26,8 @@ public class UsedPostServiceImpl implements UsedPostService {
 
     private final UsedPostRepository usedPostRepository;
     private final WishRepository wishRepository;
-    private final UsedPostRepository userRepository;
+    private final UserRepository userRepository;
+    private final PictureRepository pictureRepository;
 
     @Override
     public List<UsedPostDTO> getUsedPosts() {
@@ -33,49 +43,54 @@ public class UsedPostServiceImpl implements UsedPostService {
         return usedPostEntities.stream()
                 .map(entity -> UsedPostDTO.builder()
                         .title(entity.getTitle())
-                        .content(entity.getContent())
                         .price(entity.getPrice())
-//                        .pictures(entity.getPictures())
-//                        .category(entity.getCategory())
+                        .userId(entity.getId())
+                        .pictures("entity.getPictures().get(0).getUrl()")
+                        .createTime(entity.getCreatedDate())
                         .build())
                 .toList();
     }
 
     // ID로 게시글 조회
     @Override
-    public UsedPostDTO findPostById(Long id) {
+    public UsedPostIdDTO findPostById(Long id) {
         // 게시글을 ID로 조회합니다.
-        UsedPostEntity findPost = usedPostRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("post not found"));
+        UsedPostEntity findPost = usedPostRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_POST));
 
-        UsedPostDTO usedPostDTO = UsedPostDTO.builder()
+        List<String> pictureUrls = new ArrayList<>();
+        findPost.getPictures().forEach(pictureEntity -> pictureUrls.add(pictureEntity.getUrl()));
+
+        UsedPostIdDTO usedPostIdDTO = UsedPostIdDTO.builder()
                 .title(findPost.getTitle())
                 .content(findPost.getContent())
                 .price(findPost.getPrice())
-                //.pictures(used.getPictures())
+                .userId(findPost.getUser().getId())
+                .pictureUrls(pictureUrls)
+                .createTime(findPost.getCreatedDate())
+                .views(findPost.getViews())
                 .build();
 
-        return usedPostDTO;
+        return usedPostIdDTO;
     }
 
     // 게시글 생성
     @Override
-    public UsedPostDTO createPost(UsedPostDTO usedPostDTO) {
+    public UsedPostCreateDTO createPost(UsedPostCreateDTO usedPostCreateDTO) {
+        UserEntity user = userRepository.findById(usedPostCreateDTO.getUserId()).orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_USER));
+
         // DTO를 Entity로 변환
         UsedPostEntity usedPostEntity = UsedPostEntity.builder()
-                .title(usedPostDTO.getTitle())
-                .content(usedPostDTO.getContent())
-                .price(usedPostDTO.getPrice())
-//                .status("ACTIVE")  // 게시글 생성 시 기본 상태
-//                .views(0L)         // 초기 조회수는 0
-//                .deleted(false)    // 초기 삭제 상태는 false
-//                .user(usedPostDTO.getUser()) // UserEntity 매핑
+                .title(usedPostCreateDTO.getTitle())
+                .content(usedPostCreateDTO.getContent())
+                .price(usedPostCreateDTO.getPrice())
+                .user(user)
                 .build();
 
         // Entity를 데이터베이스에 저장
         UsedPostEntity create = usedPostRepository.save(usedPostEntity);
 
         // 저장된 Entity를 다시 DTO로 변환하여 반환
-        return UsedPostDTO.builder()
+        return UsedPostCreateDTO.builder()
                 .title(create.getTitle())
                 .content(create.getContent())
                 .price(create.getPrice())
@@ -90,7 +105,7 @@ public class UsedPostServiceImpl implements UsedPostService {
 
         // 게시글이 존재하는 경우, 업데이트할 필드를 설정합니다.
         upost.setTitle(usedPostDTO.getTitle());
-        upost.setContent(usedPostDTO.getContent());
+//        upost.setContent(usedPostDTO.getContent());
 //        post.setStatus(usedPostDTO.getStatus());
         upost.setPrice(usedPostDTO.getPrice());
 
@@ -100,7 +115,7 @@ public class UsedPostServiceImpl implements UsedPostService {
         // Entity를 DTO로 변환하여 반환합니다.
         return UsedPostDTO.builder()
                 .title(updatedPost.getTitle())
-                .content(updatedPost.getContent())
+//                .content(updatedPost.getContent())
                 .price(updatedPost.getPrice())
                 .build();
     }

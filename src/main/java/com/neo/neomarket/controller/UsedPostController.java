@@ -1,6 +1,8 @@
 package com.neo.neomarket.controller;
 
-import com.neo.neomarket.dto.UsedPostDTO;
+import com.neo.neomarket.dto.usedpost.UsedPostCreateDTO;
+import com.neo.neomarket.dto.usedpost.UsedPostDTO;
+import com.neo.neomarket.dto.usedpost.UsedPostIdDTO;
 import com.neo.neomarket.service.UsedPostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -26,16 +28,16 @@ public class UsedPostController {
 
     // ID로 게시글 조회
     @GetMapping("/used/{id}")
-    public ResponseEntity<UsedPostDTO> findPostById(@PathVariable(name = "id") Long id) {
-        UsedPostDTO findPost = usedPostService.findPostById(id);
+    public ResponseEntity<UsedPostIdDTO> findPostById(@PathVariable(name = "id") Long id) {
+        UsedPostIdDTO findPost = usedPostService.findPostById(id);
 
         return ResponseEntity.ok().body(findPost);
     }
 
     // 게시글 생성
     @PostMapping("/used")
-    public ResponseEntity<UsedPostDTO> createPost(@RequestBody UsedPostDTO usedPostDTO ) {
-        UsedPostDTO createdPost = usedPostService.createPost(usedPostDTO);
+    public ResponseEntity<UsedPostCreateDTO> createPost(@RequestBody UsedPostCreateDTO usedPostCreateDTO ) {
+        UsedPostCreateDTO createdPost = usedPostService.createPost(usedPostCreateDTO);
 
         return ResponseEntity.ok().body(createdPost);
     }

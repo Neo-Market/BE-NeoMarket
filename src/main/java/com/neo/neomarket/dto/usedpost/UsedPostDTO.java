@@ -1,22 +1,22 @@
-package com.neo.neomarket.dto;
+package com.neo.neomarket.dto.usedpost;
 
-import com.neo.neomarket.entity.mysql.UsedPostEntity;
 import lombok.*;
+
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+// 전체 게시물 조회 DTO
 public class UsedPostDTO  {
     private String title;
-
-    private String content;
 
     private long price;
 
     private String pictures;
 
-    private String category;
+    private Long userId;
 
-
+    private LocalDateTime createTime;
 }
