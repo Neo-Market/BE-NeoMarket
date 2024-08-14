@@ -56,7 +56,6 @@ public class AuctionServiceImpl implements AuctionService {
                                 .map(PictureEntity::getUrl) // 사진 URL 추가
                                 .collect(Collectors.toList())) // URL 리스트 추가
                         .userId(entity.getUser().getId()) // 사용자 ID 추가
-                        .status(entity.getStatus()) // 상태 추가
                         .build())
                 .collect(Collectors.toList());
     }

@@ -27,18 +27,15 @@ public class AuctionPostEntity  extends BaseTimeEntity{
     private String content;
 
     @Column(nullable = false)
-    private int status = 0;
-
-    // 상태를 상수로 정의
-    public static final int STATUS_ACTIVE = 0; // 활성 상태
-    public static final int STATUS_INACTIVE = 1; // 비활성 상태
-    public static final int STATUS_CLOSED = 2; // 종료 상태
+    private String status;
 
     private Long startPrice;
 
     private Long currentPrice;
 
-    private Long views;
+    @Builder.Default
+    @Column(nullable = false)
+    private Long views = 0L;
 
     @Column(nullable = false)
     private String deadline;
