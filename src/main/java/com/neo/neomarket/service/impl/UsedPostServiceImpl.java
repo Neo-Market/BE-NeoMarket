@@ -76,7 +76,7 @@ public class UsedPostServiceImpl implements UsedPostService {
 
     // 게시글 생성
     @Override
-    public UsedPostCreateDTO createPost(UsedPostCreateDTO usedPostCreateDTO) {
+    public Long createPost(UsedPostCreateDTO usedPostCreateDTO) {
         UserEntity user = userRepository.findById(usedPostCreateDTO.getUserId()).orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_USER));
 
         // DTO를 Entity로 변환
@@ -85,19 +85,13 @@ public class UsedPostServiceImpl implements UsedPostService {
                 .category(usedPostCreateDTO.getCategory())
                 .content(usedPostCreateDTO.getContent())
                 .price(usedPostCreateDTO.getPrice())
-                .status(usedPostCreateDTO.getStatus())
                 .user(user)
                 .build();
 
         // Entity를 데이터베이스에 저장
         UsedPostEntity create = usedPostRepository.save(usedPostEntity);
 
-        // 저장된 Entity를 다시 DTO로 변환하여 반환
-        UsedPostCreateDTO CreateDTO = UsedPostCreateDTO.builder()
-                .userId(create.getUser().getId())
-                .build();
-
-        return CreateDTO;
+        return create.getId();
     }
 
     // 게시글 수정
@@ -111,10 +105,9 @@ public class UsedPostServiceImpl implements UsedPostService {
         uPost.setCategory(usedPostUpdateDTO.getCategory());
         uPost.setContent(usedPostUpdateDTO.getContent());
         uPost.setPrice(usedPostUpdateDTO.getPrice());
-        uPost.setStatus(usedPostUpdateDTO.getStatus());
 
         // 업데이트된 게시글을 저장합니다.
-        UsedPostEntity updatedPost = usedPostRepository.save(uPost);
+        usedPostRepository.save(uPost);
 
     }
 

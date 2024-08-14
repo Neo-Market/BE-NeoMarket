@@ -22,7 +22,4 @@ public class UsedPostCreateDTO {
     private Long userId;
 
     private String category;
-
-    private String status;
-
 }
