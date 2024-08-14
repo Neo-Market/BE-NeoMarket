@@ -9,9 +9,9 @@ public class CorsConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")  // API 경로 패턴
-                .allowedOrigins("http://localhost:3000")  // React 앱의 주소
+                .allowedOrigins("http://localhost:3000")  // 프론트엔드 주소
                 .allowedMethods("GET", "POST", "PUT", "DELETE")
                 .allowedHeaders("*")
-                .allowCredentials(true);
+                .allowCredentials(true); // withCredentials를 사용하기 위해 필요
     }
 }
