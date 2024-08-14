@@ -24,6 +24,7 @@ public class OAuthController {
     @Value("${spring.security.oauth2.client.registration.google.redirect-uri}")
     private String redirectUri;
 
+
     @GetMapping("/api/login")
     public void redirectToGoogleAuth(HttpServletResponse response) throws IOException {
         String authUrl = UriComponentsBuilder.fromHttpUrl("https://accounts.google.com/o/oauth2/v2/auth")
