@@ -1,4 +1,4 @@
-package com.neo.neomarket.dto;
+package com.neo.neomarket.dto.request;
 
 
 import lombok.*;

@@ -52,9 +52,9 @@ public class AuctionPostEntity  extends BaseTimeEntity{
     private UserEntity user;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "auctionPost")
-    private List<WishEntity> wishes =new ArrayList<>();
+    private final List<WishEntity> wishes =new ArrayList<>();
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "auctionPost")
-    private  List<PictureEntity> pictures = new ArrayList<>(); //final인 이유?!
+    private final List<PictureEntity> pictures = new ArrayList<>(); //final인 이유?!
 }
 

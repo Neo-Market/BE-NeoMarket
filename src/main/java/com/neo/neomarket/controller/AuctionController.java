@@ -1,12 +1,12 @@
 package com.neo.neomarket.controller;
 
-import com.neo.neomarket.dto.AuctionPostCreateDTO;
-import com.neo.neomarket.dto.AuctionPostDTO;
+import com.neo.neomarket.dto.request.AuctionPostCreateDTO;
+import com.neo.neomarket.dto.response.AuctionPostDTO;
+import com.neo.neomarket.dto.response.AuctionPostReadDTO;
+import com.neo.neomarket.dto.request.AuctionPostUpdateDTO;
 import com.neo.neomarket.service.AuctionService;
 import io.swagger.v3.oas.annotations.tags.Tag;
->>>>>>> develop
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,8 +31,8 @@ public class AuctionController {
 
     // post read
     @GetMapping("/auction/{id}")
-    public ResponseEntity<AuctionPostDTO> getAuctionById(@PathVariable Long id) {
-        AuctionPostDTO auctionPost = auctionService.getAuctionPostById(id);
+    public ResponseEntity<AuctionPostReadDTO> getAuctionById(@PathVariable Long id) {
+        AuctionPostReadDTO auctionPost = auctionService.getAuctionPostById(id);
         return ResponseEntity.ok(auctionPost);
     }
 
@@ -43,9 +43,9 @@ public class AuctionController {
         return ResponseEntity.ok().body(createdPost);
     }
     //update
-    @PutMapping("/auction/{id}")
-    public ResponseEntity<AuctionPostDTO> updateAuction(@PathVariable Long id, @RequestBody AuctionPostDTO auctionPostDTO) {
-        AuctionPostDTO updatedPost = auctionService.updateAuctionPost(id, auctionPostDTO);
+    @PatchMapping("/auction/{id}")
+    public ResponseEntity<AuctionPostUpdateDTO> updateAuction(@PathVariable Long id, @RequestBody AuctionPostUpdateDTO auctionPostUpdateDTO) {
+        AuctionPostUpdateDTO updatedPost = auctionService.updateAuctionPost(id, auctionPostUpdateDTO);
         return ResponseEntity.ok(updatedPost);
     }
 
