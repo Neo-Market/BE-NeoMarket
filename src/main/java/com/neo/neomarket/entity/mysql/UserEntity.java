@@ -46,8 +46,9 @@ public class UserEntity {
 
     private LocalDateTime inactiveDate;
 
-    private Long point;
-
+    @Builder.Default
+    @Column(nullable = false)
+    private Long point = 0L;
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user")
     private final List<AuctionPostEntity> auctionPostEntities =new ArrayList<>();
 
