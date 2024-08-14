@@ -11,6 +11,6 @@ public interface UsedPostService    {
     List<UsedPostDTO> getUsedPosts();
     UsedPostIdDTO findPostById(Long id);
     UsedPostCreateDTO createPost(UsedPostCreateDTO usedPostCreateDTO);
-    UsedPostUpdateDTO updatePost(Long id, UsedPostUpdateDTO usedPostUpdateDTO);
+    void updatePost(Long id, UsedPostUpdateDTO usedPostUpdateDTO);
     void deletePost(Long id);
 }

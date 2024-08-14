@@ -4,6 +4,7 @@ import com.neo.neomarket.dto.usedpost.UsedPostCreateDTO;
 import com.neo.neomarket.dto.usedpost.UsedPostDTO;
 import com.neo.neomarket.dto.usedpost.UsedPostIdDTO;
 import com.neo.neomarket.dto.usedpost.UsedPostUpdateDTO;
+import com.neo.neomarket.exception.CustomException;
 import com.neo.neomarket.service.UsedPostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -44,12 +45,13 @@ public class UsedPostController {
     }
 
     // 게시글 수정
-    @PatchMapping("used/{id}")
-    public ResponseEntity<UsedPostUpdateDTO> updatePost(@PathVariable Long id, @RequestBody UsedPostUpdateDTO usedPostUpdateDTO) {
-        UsedPostUpdateDTO updatedPost = usedPostService.updatePost(id, usedPostUpdateDTO);
-        if (updatedPost != null) {
-            return new ResponseEntity<>(updatedPost, HttpStatus.OK);
-        } else {
+    @PutMapping("used/{id}")
+    public ResponseEntity<Void> updatePost(@PathVariable Long id, @RequestBody UsedPostUpdateDTO usedPostUpdateDTO) {
+        try {
+            usedPostService.updatePost(id, usedPostUpdateDTO);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (CustomException e) {
+            // 예외 발생 시, 예외에 맞는 상태 코드 반환
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }

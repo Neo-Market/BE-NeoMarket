@@ -94,12 +94,7 @@ public class UsedPostServiceImpl implements UsedPostService {
 
         // 저장된 Entity를 다시 DTO로 변환하여 반환
         UsedPostCreateDTO CreateDTO = UsedPostCreateDTO.builder()
-                .title(create.getTitle())
-                .category(create.getCategory())
-                .content(create.getContent())
-                .price(create.getPrice())
                 .userId(create.getUser().getId())
-                .status(create.getStatus())
                 .build();
 
         return CreateDTO;
@@ -107,37 +102,27 @@ public class UsedPostServiceImpl implements UsedPostService {
 
     // 게시글 수정
     @Override
-    public UsedPostUpdateDTO updatePost(Long id, UsedPostUpdateDTO usedPostUpdateDTO) {
+    public void updatePost(Long id, UsedPostUpdateDTO usedPostUpdateDTO) {
         // 게시글을 ID로 조회합니다.
-        UsedPostEntity upost = usedPostRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_POST));
+        UsedPostEntity uPost = usedPostRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_POST));
 
         // 게시글이 존재하는 경우, 업데이트할 필드를 설정합니다.
-        upost.setTitle(usedPostUpdateDTO.getTitle());
-        upost.setCategory(usedPostUpdateDTO.getCategory());
-        upost.setContent(usedPostUpdateDTO.getContent());
-        upost.setPrice(usedPostUpdateDTO.getPrice());
-        upost.setStatus(usedPostUpdateDTO.getStatus());
+        uPost.setTitle(usedPostUpdateDTO.getTitle());
+        uPost.setCategory(usedPostUpdateDTO.getCategory());
+        uPost.setContent(usedPostUpdateDTO.getContent());
+        uPost.setPrice(usedPostUpdateDTO.getPrice());
+        uPost.setStatus(usedPostUpdateDTO.getStatus());
 
         // 업데이트된 게시글을 저장합니다.
-        UsedPostEntity updatedPost = usedPostRepository.save(upost);
+        UsedPostEntity updatedPost = usedPostRepository.save(uPost);
 
-        // Entity를 DTO로 변환하여 반환합니다.
-        UsedPostUpdateDTO UpdatDTO = UsedPostUpdateDTO.builder()
-                .title(updatedPost.getTitle())
-                .category(updatedPost.getCategory())
-                .content(updatedPost.getContent())
-                .price(updatedPost.getPrice())
-                .status(updatedPost.getStatus())
-                .build();
-
-        return UpdatDTO;
     }
 
     // 게시글 삭제
     @Override
     public void deletePost(Long id) {
         if(!usedPostRepository.existsById(id)){
-            throw new RuntimeException("게시물이 없습니다.");
+            throw new CustomException(ErrorCode.NOT_EXIST_POST);
         }
         usedPostRepository.deleteById(id);
     }

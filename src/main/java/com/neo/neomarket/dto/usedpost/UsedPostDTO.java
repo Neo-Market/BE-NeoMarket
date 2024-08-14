@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 public class UsedPostDTO  {
     private String title;
 
-    private long price;
+    private Long price;
 
     private String pictures;
 

@@ -25,5 +25,4 @@ public class UsedPostCreateDTO {
 
     private String status;
 
-//    private List<String> pictures;
 }
