@@ -3,8 +3,8 @@ package com.neo.neomarket.service;
 import com.neo.neomarket.dto.*;
 import com.neo.neomarket.dto.Auction.request.AuctionPostCreateDTO;
 import com.neo.neomarket.dto.Auction.request.AuctionPostUpdateDTO;
-import com.neo.neomarket.dto.Auction.request.response.AuctionPostDTO;
-import com.neo.neomarket.dto.Auction.request.response.AuctionPostReadDTO;
+import com.neo.neomarket.dto.response.AuctionPostDTO;
+import com.neo.neomarket.dto.response.AuctionPostReadDTO;
 
 import java.util.List;
 

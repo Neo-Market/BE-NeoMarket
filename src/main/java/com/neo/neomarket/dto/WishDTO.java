@@ -10,9 +10,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class WishDTO {
 
-    @Schema(description = "위시 id")
-    private Long wishId;
+    private Long postId;
+    private Long postType;
+    private Long userId;
 
-    @Schema(description = "게시글 id")
-    private String title;
 }

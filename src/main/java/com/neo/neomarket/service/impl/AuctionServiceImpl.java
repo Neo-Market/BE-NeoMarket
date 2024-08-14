@@ -3,8 +3,8 @@ package com.neo.neomarket.service.impl;
 import com.neo.neomarket.dto.*;
 import com.neo.neomarket.dto.Auction.request.AuctionPostCreateDTO;
 import com.neo.neomarket.dto.Auction.request.AuctionPostUpdateDTO;
-import com.neo.neomarket.dto.Auction.request.response.AuctionPostDTO;
-import com.neo.neomarket.dto.Auction.request.response.AuctionPostReadDTO;
+import com.neo.neomarket.dto.response.AuctionPostDTO;
+import com.neo.neomarket.dto.response.AuctionPostReadDTO;
 import com.neo.neomarket.entity.mysql.AuctionPostEntity;
 import com.neo.neomarket.entity.mysql.PictureEntity;
 import com.neo.neomarket.entity.mysql.UserEntity;
@@ -25,8 +25,6 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
-@Setter
-@Getter
 public class AuctionServiceImpl implements AuctionService {
     private final AuctionPostRepository auctionPostRepository;
     private final UserRepository userRepository;
@@ -67,14 +65,17 @@ public class AuctionServiceImpl implements AuctionService {
     @Override
     public AuctionPostReadDTO getAuctionPostById(Long id) {
         AuctionPostEntity auctionPostEntity = auctionPostRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다"));
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_POST));
 
-        UserEntity user = userRepository.findById(auctionPostEntity.getUser().getId())
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_USER));
+        UserEntity user = auctionPostEntity.getUser();
+        if (user == null) {
+            throw new CustomException(ErrorCode.NOT_EXIST_USER);
+        }
+
         String nickname = user.getNickname();
 
         return AuctionPostReadDTO.builder()
-                .id(auctionPostEntity.getId()) // id 필드 추가
+                .id(auctionPostEntity.getId())
                 .title(auctionPostEntity.getTitle())
                 .content(auctionPostEntity.getContent())
                 .startPrice(auctionPostEntity.getStartPrice())
@@ -83,7 +84,7 @@ public class AuctionServiceImpl implements AuctionService {
                 .category(auctionPostEntity.getCategory())
                 .pictureUrls(auctionPostEntity.getPictures().stream()
                         .map(PictureEntity::getUrl)
-                        .collect(Collectors.toList())) // 모든 사진 URL 리스트 추가
+                        .collect(Collectors.toList()))
                 .nickname(nickname)
                 .build();
     }
@@ -120,16 +121,7 @@ public class AuctionServiceImpl implements AuctionService {
 
         // DTO로 변환하여 반환
         return AuctionPostCreateDTO.builder()
-                .title(savedEntity.getTitle())
-                .content(savedEntity.getContent())
-                .startPrice(savedEntity.getStartPrice())
-                .currentPrice(savedEntity.getCurrentPrice())
-                .deadline(savedEntity.getDeadline())
-                .category(savedEntity.getCategory())
-                .pictureUrls(savedEntity.getPictures().stream()
-                        .map(PictureEntity::getUrl) // URL 리스트로 변환
-                        .collect(Collectors.toList()))
-                .userId(user.getId())
+                .userId(savedEntity.getUser().getId())
                 .build();
     }
 
@@ -137,7 +129,7 @@ public class AuctionServiceImpl implements AuctionService {
     @Override
     public AuctionPostUpdateDTO updateAuctionPost(Long id, AuctionPostUpdateDTO auctionPostUpdateDTO) {
         AuctionPostEntity auctionPostEntity = auctionPostRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_POST));
 
         // DTO의 값으로 엔티티 업데이트
         auctionPostEntity.setTitle(auctionPostUpdateDTO.getTitle());
@@ -160,7 +152,7 @@ public class AuctionServiceImpl implements AuctionService {
     @Override
     public void deleteAuctionPost(Long id) {
         if (!auctionPostRepository.existsById(id)) {
-            throw new RuntimeException("게시물이 없습니다.");
+            throw new CustomException(ErrorCode.NOT_EXIST_POST);
         }
         auctionPostRepository.deleteById(id); // 엔티티 완전 삭제
     }
