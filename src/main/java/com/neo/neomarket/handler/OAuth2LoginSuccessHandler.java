@@ -4,6 +4,7 @@ import com.neo.neomarket.repository.mysql.UserRepository;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -21,13 +22,15 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) throws IOException, ServletException {
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
-        String email = oAuth2User.getAttribute("email");
 
+        // 세션에 OAuth2User 객체를 저장
+        HttpSession session = request.getSession();
+        session.setAttribute("oauthUser", oAuth2User);
+
+        String email = oAuth2User.getAttribute("email");
         if (userRepository.findByEmail(email).isPresent()) {
-            // 기존 사용자인 경우
-            getRedirectStrategy().sendRedirect(request, response, "/");
+            getRedirectStrategy().sendRedirect(request, response, "http://localhost:3000/");
         } else {
-            // 새로운 사용자인 경우
             getRedirectStrategy().sendRedirect(request, response, "http://localhost:3000/register");
         }
     }
