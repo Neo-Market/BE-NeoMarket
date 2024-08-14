@@ -79,7 +79,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void exchangeNeoPay(ExchangeNeoPayDTO exchangeNeoPayDTO) {
-        UserEntity user = userRepository.findById(exchangeNeoPayDTO.getUserId()).orElseThrow(() -> new IllegalArgumentException("user not found"));
+        UserEntity user = userRepository.findById(exchangeNeoPayDTO.getUserId()).orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_USER));
         if(user.getPoint() < exchangeNeoPayDTO.getPoint()) {
             UserExchangeLogDTO exchangeFailLogDTO = UserExchangeLogDTO.builder()
                     .userId(user.getId())
