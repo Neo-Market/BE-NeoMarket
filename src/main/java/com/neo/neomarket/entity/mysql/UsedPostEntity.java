@@ -33,7 +33,7 @@ public class UsedPostEntity extends BaseTimeEntity {
     @Column(nullable = false)
     private Long views = 0L;
 
-
+    @Column
     private String category;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "usedPost")

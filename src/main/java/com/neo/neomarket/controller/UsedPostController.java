@@ -38,8 +38,8 @@ public class UsedPostController {
 
     // 게시글 생성
     @PostMapping("/used")
-    public ResponseEntity<UsedPostCreateDTO> createPost(@RequestBody UsedPostCreateDTO usedPostCreateDTO ) {
-        UsedPostCreateDTO createdPost = usedPostService.createPost(usedPostCreateDTO);
+    public ResponseEntity<Long> createPost(@RequestBody UsedPostCreateDTO usedPostCreateDTO ) {
+        Long createdPost = usedPostService.createPost(usedPostCreateDTO);
 
         return ResponseEntity.ok().body(createdPost);
     }

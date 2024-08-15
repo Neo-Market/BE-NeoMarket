@@ -23,19 +23,20 @@ public class UserEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 20, nullable = false)
-    private String nickname;
-
     @Column(length = 20)
-    private String username;
+    private String name;
 
     @Column(unique = true)
     private String email;
 
-    private String profile;
+    private String picture;
 
+    @Column(length = 20, nullable = false)
+    private String nickname;
+
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String role;
+    private Role role;
 
     private String address;
 

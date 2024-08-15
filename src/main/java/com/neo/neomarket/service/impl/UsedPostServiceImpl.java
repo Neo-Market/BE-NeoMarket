@@ -48,6 +48,7 @@ public class UsedPostServiceImpl implements UsedPostService {
                         .createTime(entity.getCreatedDate())
                         .category(entity.getCategory())
                         .nickname(entity.getUser().getNickname())
+                        .picture(entity.getPictures().get(0).getUrl())
                         .build())
                 .toList();
     }
@@ -69,6 +70,7 @@ public class UsedPostServiceImpl implements UsedPostService {
                 .createTime(findPost.getCreatedDate())
                 .views(findPost.getViews())
                 .category(findPost.getCategory())
+                .pictures(pictureUrls)
                 .build();
 
         return usedPostIdDTO;
@@ -76,7 +78,7 @@ public class UsedPostServiceImpl implements UsedPostService {
 
     // 게시글 생성
     @Override
-    public UsedPostCreateDTO createPost(UsedPostCreateDTO usedPostCreateDTO) {
+    public Long createPost(UsedPostCreateDTO usedPostCreateDTO) {
         UserEntity user = userRepository.findById(usedPostCreateDTO.getUserId()).orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_USER));
 
         // DTO를 Entity로 변환
@@ -88,31 +90,28 @@ public class UsedPostServiceImpl implements UsedPostService {
                 .user(user)
                 .build();
 
+        usedPostCreateDTO.getPictures().forEach(picture -> {
+            PictureEntity pictureEntity = PictureEntity.builder().url(picture).build();
+            usedPostEntity.getPictures().add(pictureEntity);
+        });
+
         // Entity를 데이터베이스에 저장
         UsedPostEntity create = usedPostRepository.save(usedPostEntity);
 
-        // 저장된 Entity를 다시 DTO로 변환하여 반환
-        UsedPostCreateDTO CreateDTO = UsedPostCreateDTO.builder()
-                .userId(create.getUser().getId())
-                .build();
+        return create.getId();
 
-        return CreateDTO;
     }
 
     // 게시글 수정
     @Override
     public void updatePost(Long id, UsedPostUpdateDTO usedPostUpdateDTO) {
-        // 게시글을 ID로 조회합니다.
+        // 게시글을 게시글 ID로 조회합니다.
         UsedPostEntity uPost = usedPostRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_POST));
 
-        // 게시글이 존재하는 경우, 업데이트할 필드를 설정합니다.
-        uPost.setTitle(usedPostUpdateDTO.getTitle());
-        uPost.setCategory(usedPostUpdateDTO.getCategory());
-        uPost.setContent(usedPostUpdateDTO.getContent());
-        uPost.setPrice(usedPostUpdateDTO.getPrice());
+        UsedPostEntity upPost = usedPostUpdateDTO.toEntity(uPost);
 
         // 업데이트된 게시글을 저장합니다.
-        usedPostRepository.save(uPost);
+        usedPostRepository.save(upPost);
 
     }
 
