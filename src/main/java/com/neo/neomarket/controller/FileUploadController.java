@@ -29,8 +29,6 @@ public class FileUploadController {
     @Value("${cloud.aws.s3.bucketName}")
     private String bucketName;
 
-
-
     @Operation(summary = "이미지 업로드", description = "S3에 이미지 업로드")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "이미지를 성공적으로 업로드 했습니다.",
