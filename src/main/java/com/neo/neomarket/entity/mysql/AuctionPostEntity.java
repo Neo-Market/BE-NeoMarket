@@ -3,6 +3,7 @@ package com.neo.neomarket.entity.mysql;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +17,7 @@ import java.util.List;
 @Entity
 @Table(name="AUCTION_POST")
 public class AuctionPostEntity  extends BaseTimeEntity{
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -36,7 +37,7 @@ public class AuctionPostEntity  extends BaseTimeEntity{
     private Long views = 0L;
 
     @Column(nullable = false)
-    private String deadline;
+    private LocalDateTime deadline;
 
 
     private String category;
