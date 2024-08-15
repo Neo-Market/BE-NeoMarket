@@ -22,7 +22,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/", "/api/login", "/api/users/**", "/login", "/login/oauth2/code/google")
+                        .requestMatchers("/", "/api/login", "/api/users", "/login", "/login/oauth2/code/google")
                         .permitAll()
                         .requestMatchers("/api/session-user/info").authenticated() // 이 엔드포인트는 인증된 사용자만 접근
                         .anyRequest().authenticated()

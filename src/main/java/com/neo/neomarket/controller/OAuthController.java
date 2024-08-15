@@ -34,7 +34,6 @@ public class OAuthController {
                 .queryParam("scope", "openid profile email")
                 .build().toUriString();
 
-        // 로그로 OAuth2 URL을 출력
         logger.info("Generated Google OAuth2 URL: " + authUrl);
 
         // 클라이언트를 구글 인증 페이지로 리디렉션
