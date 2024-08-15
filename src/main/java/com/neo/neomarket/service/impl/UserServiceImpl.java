@@ -65,8 +65,11 @@ public class UserServiceImpl implements UserService {
         user.getWishes().forEach(wish -> {
             if (wish.getAuctionPost() == null && wish.getUsedPost() == null)
                 throw new CustomException(ErrorCode.INCORRECT_DATA);
-            String title = wish.getAuctionPost() == null ? wish.getUsedPost().getTitle() : wish.getAuctionPost().getTitle();
-            WishDTO wishDTO = new WishDTO(wish.getId(), title);
+            Long title = (wish.getAuctionPost() != null) ?
+                    wish.getAuctionPost().getId() :
+                    wish.getUsedPost().getId();
+            Long postType = (wish.getAuctionPost() != null) ? 0L : 1L;
+            WishDTO wishDTO = new WishDTO(wish.getId(), title, postType );
             wishes.add(wishDTO);
         });
 
