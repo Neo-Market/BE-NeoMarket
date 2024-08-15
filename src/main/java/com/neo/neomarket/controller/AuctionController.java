@@ -1,9 +1,5 @@
 package com.neo.neomarket.controller;
 
-import com.neo.neomarket.dto.Auction.request.AuctionPostCreateDTO;
-import com.neo.neomarket.dto.Auction.request.response.AuctionPostDTO;
-import com.neo.neomarket.dto.Auction.request.response.AuctionPostReadDTO;
-import com.neo.neomarket.dto.Auction.request.AuctionPostUpdateDTO;
 import com.neo.neomarket.dto.BidRequestDTO;
 import com.neo.neomarket.repository.mysql.UsedPostRepository;
 import com.neo.neomarket.service.AuctionService;
@@ -11,8 +7,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Tag(name = "Auction API", description = "Auction Controller")
 
