@@ -17,6 +17,4 @@ public class UsedPostUpdateDTO {
     private Long price;
 
     private String category;
-
-    private String status;
 }

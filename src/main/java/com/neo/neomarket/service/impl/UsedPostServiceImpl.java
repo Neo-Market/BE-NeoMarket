@@ -85,7 +85,6 @@ public class UsedPostServiceImpl implements UsedPostService {
                 .category(usedPostCreateDTO.getCategory())
                 .content(usedPostCreateDTO.getContent())
                 .price(usedPostCreateDTO.getPrice())
-                .status(usedPostCreateDTO.getStatus())
                 .user(user)
                 .build();
 
@@ -111,10 +110,9 @@ public class UsedPostServiceImpl implements UsedPostService {
         uPost.setCategory(usedPostUpdateDTO.getCategory());
         uPost.setContent(usedPostUpdateDTO.getContent());
         uPost.setPrice(usedPostUpdateDTO.getPrice());
-        uPost.setStatus(usedPostUpdateDTO.getStatus());
 
         // 업데이트된 게시글을 저장합니다.
-        UsedPostEntity updatedPost = usedPostRepository.save(uPost);
+        usedPostRepository.save(uPost);
 
     }
 
