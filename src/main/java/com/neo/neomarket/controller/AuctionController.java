@@ -4,6 +4,8 @@ import com.neo.neomarket.dto.Auction.request.AuctionPostCreateDTO;
 import com.neo.neomarket.dto.Auction.request.response.AuctionPostDTO;
 import com.neo.neomarket.dto.Auction.request.response.AuctionPostReadDTO;
 import com.neo.neomarket.dto.Auction.request.AuctionPostUpdateDTO;
+import com.neo.neomarket.dto.BidRequestDTO;
+import com.neo.neomarket.repository.mysql.UsedPostRepository;
 import com.neo.neomarket.service.AuctionService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -20,8 +22,27 @@ import java.util.List;
 public class AuctionController {
 
     private final AuctionService auctionService;
+    private final UsedPostRepository usedPostRepository;
 
-    // list read
+    @PostMapping("/auction/bid")
+    ResponseEntity<Void> bidAuction(@RequestBody BidRequestDTO bidRequestDTO){
+        auctionService.bidAction(bidRequestDTO);
+        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(auctionPost);
+    }
+
+    @PostMapping("/auction/bid/success")
+    ResponseEntity<Void> bidAuctionSuccess(@RequestParam(name = "id")Long postId){
+        auctionService.bidSuccessAction(postId);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/auction")
+    ResponseEntity<Void> test(@RequestParam Long id){
+        usedPostRepository.deleteById(id);
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping("/auction/list")
     public ResponseEntity<List<AuctionPostDTO>> getAuctionList() {
 
@@ -29,30 +50,28 @@ public class AuctionController {
         return ResponseEntity.ok(auctionList); // 결과를 ResponseEntity로 반환
     }
 
-    // post read
     @GetMapping("/auction/{id}")
     public ResponseEntity<AuctionPostReadDTO> getAuctionById(@PathVariable Long id) {
         AuctionPostReadDTO auctionPost = auctionService.getAuctionPostById(id);
         return ResponseEntity.ok(auctionPost);
     }
 
-    //create
     @PostMapping("/auction")
     public ResponseEntity<AuctionPostCreateDTO> createAuction(@RequestBody AuctionPostCreateDTO auctionPostCreateDTO) {
         AuctionPostCreateDTO createdPost = auctionService.createAuctionPost(auctionPostCreateDTO);
         return ResponseEntity.ok().body(createdPost);
     }
-    //update
+
     @PatchMapping("/auction/{id}")
     public ResponseEntity<AuctionPostUpdateDTO> updateAuction(@PathVariable Long id, @RequestBody AuctionPostUpdateDTO auctionPostUpdateDTO) {
         AuctionPostUpdateDTO updatedPost = auctionService.updateAuctionPost(id, auctionPostUpdateDTO);
         return ResponseEntity.ok(updatedPost);
     }
 
-    //delete
     @DeleteMapping("/auction/{id}")
     public ResponseEntity<Void> deleteAuction(@PathVariable Long id) {
         auctionService.deleteAuctionPost(id);
         return ResponseEntity.noContent().build(); //성공적으로 삭제된 경우 204 No content 응답한다.
     }
+
 }
