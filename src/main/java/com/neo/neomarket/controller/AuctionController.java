@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api")
 public class AuctionController {
     private final AuctionService auctionService;
+
     @PostMapping("/auction/bid")
     ResponseEntity<Void> bidAuction(@RequestBody BidRequestDTO bidRequestDTO){
         auctionService.bidAction(bidRequestDTO);
@@ -25,4 +26,5 @@ public class AuctionController {
         auctionService.bidSuccessAction(postId);
         return ResponseEntity.ok().build();
     }
+
 }
