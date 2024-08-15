@@ -26,20 +26,19 @@ public class UsedPostEntity extends BaseTimeEntity {
     @Column(nullable = false)
     private String content;
 
-    @Column(length = 2,nullable = false)
-    private String status;
-
+    @Column(nullable = false)
     private Long price;
 
-    private Long views;
+    @Builder.Default
+    @Column(nullable = false)
+    private Long views = 0L;
 
-    private Boolean deleted;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "usedPost")
-    private final List<PictureEntity> pictures = new ArrayList<>();
+    private List<PictureEntity> pictures = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "usedPost")
-    private final List<WishEntity> wishes = new ArrayList<>();
+    private List<WishEntity> wishes = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)

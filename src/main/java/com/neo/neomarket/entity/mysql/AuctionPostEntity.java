@@ -33,7 +33,9 @@ public class AuctionPostEntity  extends BaseTimeEntity{
 
     private Long currentPrice;
 
-    private Long views;
+    @Builder.Default
+    @Column(nullable = false)
+    private Long views = 0L;
 
     @Column(nullable = false)
     private String deadline;
