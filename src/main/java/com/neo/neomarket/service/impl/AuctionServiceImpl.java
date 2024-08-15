@@ -1,6 +1,4 @@
 package com.neo.neomarket.service.impl;
-
-
 import com.neo.neomarket.dto.*;
 import com.neo.neomarket.dto.Auction.request.AuctionPostCreateDTO;
 import com.neo.neomarket.dto.Auction.request.AuctionPostUpdateDTO;
@@ -18,7 +16,10 @@ import com.neo.neomarket.service.AuctionService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
->>>>>>> 4ba35d47c883ff8a6d62c886bebba9526962525f
+import com.neo.neomarket.dto.BidLogDTO;
+import com.neo.neomarket.dto.BidRequestDTO;
+import com.neo.neomarket.entity.elasticsearch.AuctionLogEntity;
+import com.neo.neomarket.repository.elasticsearch.AuctionLogRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -30,35 +31,31 @@ import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
->>>>>>> 4ba35d47c883ff8a6d62c886bebba9526962525f
+
+
 
 @RequiredArgsConstructor
 @Service
 public class AuctionServiceImpl implements AuctionService {
     private final AuctionPostRepository auctionPostRepository;
-
     private final UserRepository userRepository;
     private final PictureRepository pictureRepository;
->>>>>>> 4ba35d47c883ff8a6d62c886bebba9526962525f
+    private final AuctionLogRepository auctionLogRepository;
 
     @Override
     public void recordBidLog(BidLogDTO bidLogDTO) {
         Logger logger = LoggerFactory.getLogger("AuctionServiceLogger");
         logger.info("{}", bidLogDTO);
     }
-
     // 게시글 리스트 조회
->>>>>>> 4ba35d47c883ff8a6d62c886bebba9526962525f
     @Override
     public List<AuctionPostDTO> getAuctionPosts() {
         List<AuctionPostEntity> auctionPostEntities = auctionPostRepository.findAll();
         if (auctionPostEntities.isEmpty()) {
             return List.of();
         }
-
         return auctionPostEntities.stream()
                 .map(entity -> AuctionPostDTO.builder()
-
                         .id(entity.getId()) // ID 추가
                         .title(entity.getTitle())
                         .content(entity.getContent()) // 내용 추가
@@ -73,20 +70,16 @@ public class AuctionServiceImpl implements AuctionService {
                         .build())
                 .collect(Collectors.toList());
     }
-
     // 게시글 상세보기
     @Override
     public AuctionPostReadDTO getAuctionPostById(Long id) {
         AuctionPostEntity auctionPostEntity = auctionPostRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_POST));
-
         UserEntity user = auctionPostEntity.getUser();
         if (user == null) {
             throw new CustomException(ErrorCode.NOT_EXIST_USER);
         }
-
         String nickname = user.getNickname();
-
         return AuctionPostReadDTO.builder()
                 .id(auctionPostEntity.getId())
                 .title(auctionPostEntity.getTitle())
@@ -99,7 +92,6 @@ public class AuctionServiceImpl implements AuctionService {
                         .map(PictureEntity::getUrl)
                         .collect(Collectors.toList()))
                 .nickname(nickname)
->>>>>>> 4ba35d47c883ff8a6d62c886bebba9526962525f
                 .build();
     }
 
@@ -122,6 +114,7 @@ public class AuctionServiceImpl implements AuctionService {
                 .user(user)
                 .build();
 
+        // PictureEntity 리스트 생성
         if (pictures != null && !pictures.isEmpty()) {
             for (MultipartFile picture : pictures) {
                 try {
@@ -130,8 +123,6 @@ public class AuctionServiceImpl implements AuctionService {
                             .url(url)
                             .auctionPost(auctionPostEntity)
                             .build();
-                    pictureRepository.save(pictureEntity);
-
                     auctionPostEntity.getPictures().add(pictureEntity);
                 } catch (IOException e) {
                     throw new CustomException(ErrorCode.FILE_UPLOAD_ERROR);
@@ -141,56 +132,97 @@ public class AuctionServiceImpl implements AuctionService {
 
         // 게시글 저장
         AuctionPostEntity savedEntity = auctionPostRepository.save(auctionPostEntity);
-
-        return savedEntity.getId();
+        return savedEntity.getId(); // ID 반환
     }
 
-    // 게시글 업데이트
+                // 게시글 업데이트
+                @Override
+                public void updateAuctionPost(Long id, AuctionPostUpdateDTO auctionPostUpdateDTO) {
+                        AuctionPostEntity auctionPostEntity = auctionPostRepository.findById(id)
+                                .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_POST));
+
+                        // DTO의 값으로 엔티티 업데이트
+                        auctionPostEntity.setTitle(auctionPostUpdateDTO.getTitle());
+                        auctionPostEntity.setContent(auctionPostUpdateDTO.getContent());
+                        auctionPostEntity.setCategory(auctionPostUpdateDTO.getCategory());
+
+                        auctionPostRepository.save(auctionPostEntity);
+
+
+                    }
+
+                    // 게시글 삭제
+                    @Override
+                    public void deleteAuctionPost(Long id) {
+                        if (!auctionPostRepository.existsById(id)) {
+                            throw new CustomException(ErrorCode.NOT_EXIST_POST);
+                        }
+                        auctionPostRepository.deleteById(id); // 엔티티 완전 삭제
+                    }
+
+
+                    private String saveFile(MultipartFile file) throws IOException {
+                        // 파일의 원래 이름을 가져옵니다.
+                        String originFilename = file.getOriginalFilename();
+
+                        // 파일 확장자를 추출합니다.
+                        String extension = originFilename.substring(originFilename.lastIndexOf("."));
+
+                        // 고유한 파일 이름을 생성합니다.
+                        String storedFilename = UUID.randomUUID().toString() + extension;
+
+                        // 파일을 저장할 경로를 지정합니다. (업로드 디렉토리 필요)
+                        File dest = new File("uploads/" + storedFilename); // 예: uploads/UUID.extension
+
+                        // 파일을 해당 경로로 전송합니다.
+                        file.transferTo(dest);
+
+                        // 클라이언트에게 반환할 경로를 생성합니다.
+                        return "/uploads/" + storedFilename; // 예: /uploads/UUID.extension
+                    }
+
     @Override
-    public void updateAuctionPost(Long id, AuctionPostUpdateDTO auctionPostUpdateDTO) {
-        AuctionPostEntity auctionPostEntity = auctionPostRepository.findById(id)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_POST));
+    public void bidAction(BidRequestDTO bidRequestDTO) {
 
-        // DTO의 값으로 엔티티 업데이트
-        auctionPostEntity.setTitle(auctionPostUpdateDTO.getTitle());
-        auctionPostEntity.setContent(auctionPostUpdateDTO.getContent());
-        auctionPostEntity.setDeadline(auctionPostUpdateDTO.getDeadline());
-        auctionPostEntity.setCategory(auctionPostUpdateDTO.getCategory());
+        AuctionPostEntity post = auctionPostRepository.findById(bidRequestDTO.getPostId()).orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_POST));
+        if (bidRequestDTO.getUserId() == post.getUser().getId()) throw new CustomException(ErrorCode.BID_ON_OWN_POST);
+        else if (bidRequestDTO.getBidAmount() <= post.getCurrentPrice())
+            throw new CustomException(ErrorCode.BID_AMOUNT_TOO_LOW);
 
+        UserEntity user = userRepository.findById(bidRequestDTO.getUserId()).orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_USER));
+        if (bidRequestDTO.getBidAmount() > user.getPoint()) throw new CustomException(ErrorCode.INSUFFICIENT_BALANCE);
 
-        auctionPostRepository.save(auctionPostEntity);
+        BidLogDTO bidLogDTO = BidLogDTO.builder()
+                .bidAmount(bidRequestDTO.getBidAmount())
+                .category(post.getCategory())
+                .postId(post.getId())
+                .userId(user.getId())
+                .build();
 
+        recordBidLog(bidLogDTO);
+
+        user.exchangePoint(bidRequestDTO.getBidAmount());
+        post.setCurrentPrice(bidRequestDTO.getBidAmount());
+
+        userRepository.save(user);
+        auctionPostRepository.save(post);
     }
 
-    // 게시글 삭제
     @Override
-    public void deleteAuctionPost(Long id) {
-        if (!auctionPostRepository.existsById(id)) {
-            throw new CustomException(ErrorCode.NOT_EXIST_POST);
-        }
-        auctionPostRepository.deleteById(id);
+    public void bidSuccessAction(Long postId) {
+        AuctionPostEntity post = auctionPostRepository.findById(postId).orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_POST));
+        List<AuctionLogEntity> logs = auctionLogRepository.findByPostIdOrderByBidAmountDesc(postId);
+        if (logs.isEmpty()) throw new CustomException(ErrorCode.NO_BID_HISTORY);
+
+        UserEntity owner = userRepository.findById(post.getId()).orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_USER));
+        owner.chargePoint(logs.get(0).getBidAmount());
+        userRepository.save(owner);
+
+        logs.stream().skip(1)
+                .forEach(log -> {
+                    UserEntity user = userRepository.findById(log.getUserId()).orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_USER));
+                    user.chargePoint(log.getBidAmount());
+                    userRepository.save(user);
+                });
     }
-
-    private String saveFile(MultipartFile file) throws IOException {
-        // 파일의 원래 이름을 가져옵니다.
-        String originFilename = file.getOriginalFilename();
-
-        // 파일 확장자를 추출합니다.
-        String extension = originFilename.substring(originFilename.lastIndexOf("."));
-
-        // 고유한 파일 이름을 생성합니다.
-        String storedFilename = UUID.randomUUID().toString() + extension;
-
-        // 파일을 저장할 경로를 지정합니다. (업로드 디렉토리 필요)
-        File dest = new File("uploads/" + storedFilename); // 예: uploads/UUID.extension
-
-        // 파일을 해당 경로로 전송합니다.
-        file.transferTo(dest);
-
-        // 클라이언트에게 반환할 경로를 생성합니다.
-        return "/uploads/" + storedFilename; // 예: /uploads/UUID.extension
-    }
-
->>>>>>> 4ba35d47c883ff8a6d62c886bebba9526962525f
 }
-

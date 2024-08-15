@@ -33,9 +33,11 @@ public class UsedPostEntity extends BaseTimeEntity {
     @Column(nullable = false)
     private Long views = 0L;
 
+    private String category;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "usedPost")
-    private List<PictureEntity> pictures = new ArrayList<>();
+    @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, mappedBy = "usedPost")
+    private final List<PictureEntity> pictures = new ArrayList<>();
+
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "usedPost")
     private List<WishEntity> wishes = new ArrayList<>();
