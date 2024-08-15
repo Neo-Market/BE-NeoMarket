@@ -1,8 +1,8 @@
 package com.neo.neomarket.controller;
 
 import com.neo.neomarket.dto.ExchangeNeoPayDTO;
-import com.neo.neomarket.dto.UserSaveDTO;
 import com.neo.neomarket.dto.UserInfoDTO;
+import com.neo.neomarket.dto.UserSaveDTO;
 import com.neo.neomarket.dto.WishDTO;
 import com.neo.neomarket.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpSession;
 import java.net.URI;
+import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -23,21 +24,23 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @Tag(name = "User API", description = "User Controller")
 @RequiredArgsConstructor
 @Controller
-@RequestMapping("/api")
+@RequestMapping("/api/users")
 public class UserController {
     Logger logger = LoggerFactory.getLogger(UserController.class);
 
     private final UserService userService;
 
-    @PostMapping("/users")
+    @PostMapping
     public ResponseEntity<Void> createUser(@AuthenticationPrincipal OAuth2User principal,
                                            @RequestBody UserSaveDTO userSaveDto,
                                            UriComponentsBuilder uriComponentsBuilder) {
@@ -49,7 +52,7 @@ public class UserController {
         logger.info("Authenticated user: {}", principal.getName());
         logger.info("UserSaveDTO: {}", userSaveDto);
 
-        URI location = uriComponentsBuilder.path("/users/{id}")
+        URI location = uriComponentsBuilder.path("api/users/{id}")
                 .buildAndExpand(userService.createUser(principal, userSaveDto))
                 .toUri();
 
@@ -59,7 +62,7 @@ public class UserController {
     }
 
 
-    @GetMapping("/session-user/info")
+    @GetMapping("/session-user")
     public ResponseEntity<Map<String, String>> getUserInfo(HttpSession session) {
         OAuth2User user = (OAuth2User) session.getAttribute("oauthUser");
         if (user != null) {
@@ -75,6 +78,16 @@ public class UserController {
     }
 
 
+    @GetMapping("/me")
+    public ResponseEntity<UserInfoDTO> getCurrentUserInfo(@AuthenticationPrincipal OAuth2User principal) {
+        if (principal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        UserInfoDTO userInfo = userService.getCurrentUserInfo(principal);
+        return ResponseEntity.ok(userInfo);
+    }
+
+
     @Operation(summary = "유저 정보 조회", description = "파라미터로 받은 유저 id에 따라서 유저 정보 반환")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공적으로 유저 정보를 조회했습니다.",
@@ -84,10 +97,10 @@ public class UserController {
             @ApiResponse(responseCode = "404", description = "유저를 찾을 수 없습니다.", content = @Content),
             @ApiResponse(responseCode = "500", description = "서버 에러가 발생했습니다.", content = @Content)
     })
-    @GetMapping("/users/{id}/info")
+    @GetMapping("/{id}")
     public ResponseEntity<UserInfoDTO> userInfo(@AuthenticationPrincipal OAuth2User principal,
                                                 @PathVariable Long id) {
-        UserInfoDTO userInfoDTO = userService.userInfo(principal, id);
+        UserInfoDTO userInfoDTO = userService.getUserInfo(principal, id);
 
         return ResponseEntity.ok().body(userInfoDTO);
     }
@@ -100,7 +113,7 @@ public class UserController {
             @ApiResponse(responseCode = "404", description = "유저를 찾을 수 없습니다."),
             @ApiResponse(responseCode = "500", description = "서버 에러가 발생했습니다.")
     })
-    @PostMapping("/users/charge")
+    @PostMapping("/charge")
     public ResponseEntity<Void> chargeNeoPay(@RequestBody ExchangeNeoPayDTO exchangeNeoPayDTO) {
         userService.chargeNeoPay(exchangeNeoPayDTO);
 
@@ -116,7 +129,7 @@ public class UserController {
             @ApiResponse(responseCode = "404", description = "유저를 찾을 수 없습니다."),
             @ApiResponse(responseCode = "500", description = "서버 에러가 발생했습니다.")
     })
-    @PostMapping("/users/exchange")
+    @PostMapping("/exchange")
     public ResponseEntity<Void> exchangeNeoPay(@RequestBody ExchangeNeoPayDTO exchangeNeoPayDTO) {
         userService.exchangeNeoPay(exchangeNeoPayDTO);
 
@@ -134,7 +147,7 @@ public class UserController {
             @ApiResponse(responseCode = "422", description = "잘못된 위시리스트 데이터가 있습니다.", content = @Content),
             @ApiResponse(responseCode = "500", description = "서버 에러가 발생했습니다.", content = @Content)
     })
-    @GetMapping("/users/{id}/wish")
+    @GetMapping("/{id}/wish")
     public ResponseEntity<List<WishDTO>> getWishes(@PathVariable(name = "id") Long id) {
         List<WishDTO> wishes = userService.findWishAll(id);
 
