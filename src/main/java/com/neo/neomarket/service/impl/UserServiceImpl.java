@@ -1,7 +1,6 @@
 package com.neo.neomarket.service.impl;
 
 import com.neo.neomarket.dto.ExchangeNeoPayDTO;
-
 import com.neo.neomarket.dto.UserExchangeLogDTO;
 import com.neo.neomarket.dto.UserInfoDTO;
 import com.neo.neomarket.dto.UserSaveDTO;
@@ -31,25 +30,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserInfoDTO userInfo(OAuth2User principal, Long id) {
-        UserEntity user = userRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_USER));
-
-        String authenticatedUserEmail = principal.getAttribute("email");
-        if (!user.getEmail().equals(authenticatedUserEmail)) {
-            throw new CustomException(ErrorCode.FORBIDDEN);
-        }
-
-        return UserInfoDTO.builder()
-                .name(principal.getAttribute("name"))
-                .email(authenticatedUserEmail)
-                .picture(principal.getAttribute("picture"))
-                .nickname(user.getNickname())
-                .address(user.getAddress())
-                .accountNumber(user.getAccountNumber())
-                .bankName(user.getBankName())
-                .point(user.getPoint())
-                .build();
-
     public UserInfoDTO getCurrentUserInfo(OAuth2User principal) {
         String email = principal.getAttribute("email");
         UserEntity user = userRepository.findByEmail(email)
@@ -81,13 +61,12 @@ public class UserServiceImpl implements UserService {
         user.getWishes().forEach(wish -> {
             if (wish.getAuctionPost() == null && wish.getUsedPost() == null) {
                 throw new CustomException(ErrorCode.INCORRECT_DATA);
+            }
             Long title = (wish.getAuctionPost() != null) ?
                     wish.getAuctionPost().getId() :
                     wish.getUsedPost().getId();
             Long postType = (wish.getAuctionPost() != null) ? 0L : 1L;
             WishDTO wishDTO = new WishDTO(wish.getId(), title, postType );
-
-            wishes.add(wishDTO);
         });
 
         return wishes;

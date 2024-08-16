@@ -41,11 +41,10 @@ public class AuctionPostEntity  extends BaseTimeEntity{
 
     @Column(nullable = false)
     private LocalDateTime deadline;
-<<<<<<< HEAD
+
 
     private Boolean deleted;
-=======
->>>>>>> develop
+
 
     private String category;
 

@@ -1,7 +1,6 @@
 package com.neo.neomarket.controller;
 
 import com.neo.neomarket.dto.ExchangeNeoPayDTO;
-
 import com.neo.neomarket.dto.UserInfoDTO;
 import com.neo.neomarket.dto.UserSaveDTO;
 import com.neo.neomarket.dto.WishDTO;
@@ -15,7 +14,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpSession;
 import java.net.URI;
-
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -42,21 +40,7 @@ public class UserController {
 
     private final UserService userService;
 
-
-    @Operation(summary = "위시 리스트 조회", description = "파라미터로 받은 유저 id에 따라서 유저의 위시리스트 반환")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "성공적으로 위시 리스트를 조회했습니다.",
-                    content = @Content(mediaType = "application/json",
-                    array = @ArraySchema(schema = @Schema(implementation = WishDTO.class)))),
-            @ApiResponse(responseCode = "400", description = "잘못된 요청입니다.", content = @Content),
-            @ApiResponse(responseCode = "404", description = "유저를 찾을 수 없습니다.", content = @Content),
-            @ApiResponse(responseCode = "422", description = "잘못된 위시리스트 데이터가 있습니다.", content = @Content),
-            @ApiResponse(responseCode = "500", description = "서버 에러가 발생했습니다.", content = @Content)
-    })
-    @PostMapping("/users")
-
     @PostMapping
-
     public ResponseEntity<Void> createUser(@AuthenticationPrincipal OAuth2User principal,
                                            @RequestBody UserSaveDTO userSaveDto,
                                            UriComponentsBuilder uriComponentsBuilder) {
@@ -68,9 +52,7 @@ public class UserController {
         logger.info("Authenticated user: {}", principal.getName());
         logger.info("UserSaveDTO: {}", userSaveDto);
 
-
         URI location = uriComponentsBuilder.path("api/users/{id}")
->
                 .buildAndExpand(userService.createUser(principal, userSaveDto))
                 .toUri();
 
@@ -78,7 +60,6 @@ public class UserController {
                 .created(location)
                 .build();
     }
-
 
 
     @GetMapping("/session-user")
@@ -94,7 +75,6 @@ public class UserController {
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-
     }
 
 
@@ -117,7 +97,6 @@ public class UserController {
             @ApiResponse(responseCode = "404", description = "유저를 찾을 수 없습니다.", content = @Content),
             @ApiResponse(responseCode = "500", description = "서버 에러가 발생했습니다.", content = @Content)
     })
-
     @GetMapping("/{id}")
     public ResponseEntity<UserInfoDTO> userInfo(@AuthenticationPrincipal OAuth2User principal,
                                                 @PathVariable Long id) {
@@ -156,7 +135,6 @@ public class UserController {
 
         return ResponseEntity.ok().build();
     }
-
 
 
     @Operation(summary = "위시 리스트 조회", description = "파라미터로 받은 유저 id에 따라서 유저의 위시리스트 반환")

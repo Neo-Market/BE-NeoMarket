@@ -14,7 +14,7 @@ import java.util.List;
 public class AuctionPostDTO {
     private Long id;
     private String title;
-    private List<String> pictureUrls;
+    private String picture;
     private String content;
     private Long startPrice;
     private Long currentPrice;
@@ -22,5 +22,6 @@ public class AuctionPostDTO {
     private String category;
     private int status;
     private Long userId;
+
 
 }

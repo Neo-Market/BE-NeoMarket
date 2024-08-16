@@ -29,6 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -65,9 +66,7 @@ public class AuctionServiceImpl implements AuctionService {
                         .currentPrice(entity.getCurrentPrice()) // 현재 가격 추가
                         .deadline(entity.getDeadline()) // 마감 기한 추가
                         .category(entity.getCategory()) // 카테고리 추가
-                        .pictureUrls(entity.getPictures().stream()
-                                .map(PictureEntity::getUrl) // 사진 URL 추가
-                                .collect(Collectors.toList())) // URL 리스트 추가
+                        .picture(entity.getPictures().get(0).getUrl())
                         .userId(entity.getUser().getId()) // 사용자 ID 추가
                         .build())
                 .collect(Collectors.toList());
@@ -78,10 +77,9 @@ public class AuctionServiceImpl implements AuctionService {
         AuctionPostEntity auctionPostEntity = auctionPostRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_POST));
         UserEntity user = auctionPostEntity.getUser();
-        if (user == null) {
-            throw new CustomException(ErrorCode.NOT_EXIST_USER);
-        }
         String nickname = user.getNickname();
+        List<String> pictureUrls = new ArrayList<>();
+        auctionPostEntity.getPictures().forEach(pictureEntity -> pictureUrls.add(pictureEntity.getUrl()));
         return AuctionPostReadDTO.builder()
                 .id(auctionPostEntity.getId())
                 .title(auctionPostEntity.getTitle())
@@ -90,9 +88,7 @@ public class AuctionServiceImpl implements AuctionService {
                 .currentPrice(auctionPostEntity.getCurrentPrice())
                 .deadline(auctionPostEntity.getDeadline())
                 .category(auctionPostEntity.getCategory())
-                .pictureUrls(auctionPostEntity.getPictures().stream()
-                        .map(PictureEntity::getUrl)
-                        .collect(Collectors.toList()))
+                .pictureUrls(pictureUrls)
                 .nickname(nickname)
                 .build();
     }
