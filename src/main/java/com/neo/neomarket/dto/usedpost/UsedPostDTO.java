@@ -10,6 +10,8 @@ import java.time.LocalDateTime;
 @Builder
 // 전체 게시물 조회 DTO
 public class UsedPostDTO  {
+    private Long id;
+
     private String title;
 
     private Long price;
