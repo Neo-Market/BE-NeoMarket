@@ -42,6 +42,7 @@
 
     <logger name="UserServiceLogger" level="debug" additivity="false">
 
+
         <appender-ref ref="USER_LOGSTASH" />
         <appender-ref ref="CONSOLE" />
     </logger>

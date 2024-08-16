@@ -28,6 +28,9 @@ public class AuctionPostEntity  extends BaseTimeEntity{
     @Column(nullable = false)
     private String content;
 
+    @Column(nullable = false)
+    private String status;
+
     private Long startPrice;
 
     private Long currentPrice;
@@ -38,6 +41,10 @@ public class AuctionPostEntity  extends BaseTimeEntity{
 
     @Column(nullable = false)
     private LocalDateTime deadline;
+
+
+    private Boolean deleted;
+
 
     private String category;
 

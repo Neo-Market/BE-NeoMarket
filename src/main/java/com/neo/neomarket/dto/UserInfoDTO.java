@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class UserInfoDTO {
 
+
     @Schema(description = "유저 아이디")
     private Long id;
 
