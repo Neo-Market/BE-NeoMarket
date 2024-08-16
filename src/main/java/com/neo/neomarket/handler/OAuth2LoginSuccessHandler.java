@@ -28,10 +28,23 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         session.setAttribute("oauthUser", oAuth2User);
 
         String email = oAuth2User.getAttribute("email");
-        if (userRepository.findByEmail(email).isPresent()) {
-            getRedirectStrategy().sendRedirect(request, response, "http://localhost:3000/");
-        } else {
-            getRedirectStrategy().sendRedirect(request, response, "http://localhost:3000/register");
+        String redirectUrl;
+
+        try {
+            if (email == null) {
+                throw new IllegalArgumentException("Email not provided by OAuth provider");
+            }
+
+            if (userRepository.findByEmail(email).isPresent()) {
+                redirectUrl = "http://localhost:3000/";
+            } else {
+                redirectUrl = "http://localhost:3000/register";
+            }
+        } catch (Exception e) {
+            // 에러 발생 시 프론트엔드의 에러 페이지로 리다이렉트
+            redirectUrl = "http://localhost:3000/login?error=" + e.getMessage();
         }
+
+        getRedirectStrategy().sendRedirect(request, response, redirectUrl);
     }
 }
