@@ -1,4 +1,5 @@
 package com.neo.neomarket.service.impl;
+
 import com.neo.neomarket.dto.*;
 import com.neo.neomarket.dto.Auction.request.AuctionPostCreateDTO;
 import com.neo.neomarket.dto.Auction.request.AuctionPostUpdateDTO;
@@ -35,7 +36,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 
-
 @RequiredArgsConstructor
 @Service
 public class AuctionServiceImpl implements AuctionService {
@@ -50,6 +50,7 @@ public class AuctionServiceImpl implements AuctionService {
         Logger logger = LoggerFactory.getLogger("AuctionServiceLogger");
         logger.info("{}", bidLogDTO);
     }
+
     // 게시글 리스트 조회
     @Override
     public List<AuctionPostDTO> getAuctionPosts() {
@@ -71,6 +72,7 @@ public class AuctionServiceImpl implements AuctionService {
                         .build())
                 .collect(Collectors.toList());
     }
+
     // 게시글 상세보기
     @Override
     public AuctionPostReadDTO getAuctionPostById(Long id) {
@@ -92,8 +94,6 @@ public class AuctionServiceImpl implements AuctionService {
                 .nickname(nickname)
                 .build();
     }
-
-
 
     // 게시글 생성
 
@@ -117,55 +117,59 @@ public class AuctionServiceImpl implements AuctionService {
             auctionPostEntity.getPictures().add(pictureEntity);
         });
 
-
-
         // 게시글 저장
         AuctionPostEntity savedEntity = auctionPostRepository.save(auctionPostEntity);
         return savedEntity.getId(); // ID 반환
     }
 
 
-                    // 게시글 삭제
-                    @Override
-                    public void deleteAuctionPost(Long id) {
-                        if (!auctionPostRepository.existsById(id)) {
-                            throw new CustomException(ErrorCode.NOT_EXIST_POST);
-                        }
-                        auctionPostRepository.deleteById(id); // 엔티티 완전 삭제
-                    }
+    // 게시글 삭제
+    @Override
+    public void deleteAuctionPost(Long id) {
+        if (!auctionPostRepository.existsById(id)) {
+            throw new CustomException(ErrorCode.NOT_EXIST_POST);
+        }
+        auctionPostRepository.deleteById(id); // 엔티티 완전 삭제
+    }
 
 
-                    private String saveFile(MultipartFile file) throws IOException {
-                        // 파일의 원래 이름을 가져옵니다.
-                        String originFilename = file.getOriginalFilename();
+    private String saveFile(MultipartFile file) throws IOException {
+        // 파일의 원래 이름을 가져옵니다.
+        String originFilename = file.getOriginalFilename();
 
-                        // 파일 확장자를 추출합니다.
-                        String extension = originFilename.substring(originFilename.lastIndexOf("."));
+        // 파일 확장자를 추출합니다.
+        String extension = originFilename.substring(originFilename.lastIndexOf("."));
 
-                        // 고유한 파일 이름을 생성합니다.
-                        String storedFilename = UUID.randomUUID().toString() + extension;
+        // 고유한 파일 이름을 생성합니다.
+        String storedFilename = UUID.randomUUID().toString() + extension;
 
-                        // 파일을 저장할 경로를 지정합니다. (업로드 디렉토리 필요)
-                        File dest = new File("uploads/" + storedFilename); // 예: uploads/UUID.extension
+        // 파일을 저장할 경로를 지정합니다. (업로드 디렉토리 필요)
+        File dest = new File("uploads/" + storedFilename); // 예: uploads/UUID.extension
 
-                        // 파일을 해당 경로로 전송합니다.
-                        file.transferTo(dest);
+        // 파일을 해당 경로로 전송합니다.
+        file.transferTo(dest);
 
-                        // 클라이언트에게 반환할 경로를 생성합니다.
-                        return "/uploads/" + storedFilename; // 예: /uploads/UUID.extension
-                    }
+        // 클라이언트에게 반환할 경로를 생성합니다.
+        return "/uploads/" + storedFilename; // 예: /uploads/UUID.extension
+    }
 
 
     @Override
     public void bidAction(BidRequestDTO bidRequestDTO) {
 
-        AuctionPostEntity post = auctionPostRepository.findById(bidRequestDTO.getPostId()).orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_POST));
-        if (bidRequestDTO.getUserId() == post.getUser().getId()) throw new CustomException(ErrorCode.BID_ON_OWN_POST);
-        else if (bidRequestDTO.getBidAmount() <= post.getCurrentPrice())
+        AuctionPostEntity post = auctionPostRepository.findById(bidRequestDTO.getPostId())
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_POST));
+        if (bidRequestDTO.getUserId() == post.getUser().getId()) {
+            throw new CustomException(ErrorCode.BID_ON_OWN_POST);
+        } else if (bidRequestDTO.getBidAmount() <= post.getCurrentPrice()) {
             throw new CustomException(ErrorCode.BID_AMOUNT_TOO_LOW);
+        }
 
-        UserEntity user = userRepository.findById(bidRequestDTO.getUserId()).orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_USER));
-        if (bidRequestDTO.getBidAmount() > user.getPoint()) throw new CustomException(ErrorCode.INSUFFICIENT_BALANCE);
+        UserEntity user = userRepository.findById(bidRequestDTO.getUserId())
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_USER));
+        if (bidRequestDTO.getBidAmount() > user.getPoint()) {
+            throw new CustomException(ErrorCode.INSUFFICIENT_BALANCE);
+        }
 
         BidLogDTO bidLogDTO = BidLogDTO.builder()
                 .bidAmount(bidRequestDTO.getBidAmount())
@@ -185,17 +189,21 @@ public class AuctionServiceImpl implements AuctionService {
 
     @Override
     public void bidSuccessAction(Long postId) {
-        AuctionPostEntity post = auctionPostRepository.findById(postId).orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_POST));
+        AuctionPostEntity post = auctionPostRepository.findById(postId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_POST));
         List<AuctionLogEntity> logs = auctionLogRepository.findByPostIdOrderByBidAmountDesc(postId);
-        if (logs.isEmpty()) throw new CustomException(ErrorCode.NO_BID_HISTORY);
+        if (logs.isEmpty()) {
+            throw new CustomException(ErrorCode.NO_BID_HISTORY);
+        }
 
-        UserEntity owner = userRepository.findById(post.getId()).orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_USER));
+        UserEntity owner = post.getUser();
         owner.chargePoint(logs.get(0).getBidAmount());
         userRepository.save(owner);
 
         logs.stream().skip(1)
                 .forEach(log -> {
-                    UserEntity user = userRepository.findById(log.getUserId()).orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_USER));
+                    UserEntity user = userRepository.findById(log.getUserId())
+                            .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_USER));
                     user.chargePoint(log.getBidAmount());
                     userRepository.save(user);
                 });

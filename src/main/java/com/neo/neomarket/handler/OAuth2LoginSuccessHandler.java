@@ -7,6 +7,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -14,7 +16,11 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
+@PropertySource("classpath:application-oauth.properties")
 public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
+
+    @Value("${app.frontend.url}")
+    private String frontendUrl;
 
     private final UserRepository userRepository;
 
@@ -36,9 +42,9 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
             }
 
             if (userRepository.findByEmail(email).isPresent()) {
-                redirectUrl = "http://localhost:3000/";
+                redirectUrl = frontendUrl + "/";
             } else {
-                redirectUrl = "http://localhost:3000/register";
+                redirectUrl = frontendUrl + "/register";
             }
         } catch (Exception e) {
             // 에러 발생 시 프론트엔드의 에러 페이지로 리다이렉트
