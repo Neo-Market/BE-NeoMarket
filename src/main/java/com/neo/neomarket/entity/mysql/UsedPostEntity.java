@@ -35,7 +35,7 @@ public class UsedPostEntity extends BaseTimeEntity {
 
     private String category;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, mappedBy = "usedPost")
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "usedPost")
     private final List<PictureEntity> pictures = new ArrayList<>();
 
 
