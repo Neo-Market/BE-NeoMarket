@@ -1,8 +1,9 @@
-package com.neo.neomarket.dto.Auction.request.response;
+package com.neo.neomarket.dto.response;
 
 
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -15,7 +16,7 @@ public class AuctionPostReadDTO {
     private String title;
     private List<String> pictureUrls;
     private String content;
-    private String deadline;
+    private LocalDateTime deadline;
     private String category;
     private Long startPrice;
     private Long currentPrice;

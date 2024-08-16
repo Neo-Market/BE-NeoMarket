@@ -1,23 +1,22 @@
 package com.neo.neomarket.service.impl;
 
 import com.neo.neomarket.dto.ExchangeNeoPayDTO;
-import com.neo.neomarket.dto.UserSaveDTO;
-import com.neo.neomarket.dto.UserInfoDTO;
 import com.neo.neomarket.dto.UserExchangeLogDTO;
+import com.neo.neomarket.dto.UserInfoDTO;
+import com.neo.neomarket.dto.UserSaveDTO;
 import com.neo.neomarket.dto.WishDTO;
 import com.neo.neomarket.entity.mysql.UserEntity;
 import com.neo.neomarket.exception.CustomException;
 import com.neo.neomarket.exception.ErrorCode;
 import com.neo.neomarket.repository.mysql.UserRepository;
 import com.neo.neomarket.service.UserService;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 @RequiredArgsConstructor
@@ -31,24 +30,21 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserInfoDTO userInfo(OAuth2User principal, Long id) {
-        UserEntity user = userRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_USER));
+    public UserInfoDTO getCurrentUserInfo(OAuth2User principal) {
+        String email = principal.getAttribute("email");
+        UserEntity user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_USER));
 
-        String authenticatedUserEmail = principal.getAttribute("email");
-        if (!user.getEmail().equals(authenticatedUserEmail)) {
-            throw new CustomException(ErrorCode.FORBIDDEN);
-        }
+        return toUserInfoDTO(user);
+    }
 
-        return UserInfoDTO.builder()
-                .name(principal.getAttribute("name"))
-                .email(authenticatedUserEmail)
-                .picture(principal.getAttribute("picture"))
-                .nickname(user.getNickname())
-                .address(user.getAddress())
-                .accountNumber(user.getAccountNumber())
-                .bankName(user.getBankName())
-                .point(user.getPoint())
-                .build();
+    @Override
+    public UserInfoDTO getUserInfo(OAuth2User principal, Long id) {
+        // You might want to add authorization check here
+        UserEntity user = userRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_USER));
+
+        return toUserInfoDTO(user);
     }
 
     @Override
@@ -63,10 +59,14 @@ public class UserServiceImpl implements UserService {
 
         List<WishDTO> wishes = new ArrayList<>();
         user.getWishes().forEach(wish -> {
-            if (wish.getAuctionPost() == null && wish.getUsedPost() == null)
+            if (wish.getAuctionPost() == null && wish.getUsedPost() == null) {
                 throw new CustomException(ErrorCode.INCORRECT_DATA);
-            String title = wish.getAuctionPost() == null ? wish.getUsedPost().getTitle() : wish.getAuctionPost().getTitle();
-            WishDTO wishDTO = new WishDTO(wish.getId(), title);
+            }
+            Long postId = (wish.getAuctionPost() != null) ?
+                    wish.getAuctionPost().getId() :
+                    wish.getUsedPost().getId();
+            Long postType = (wish.getAuctionPost() != null) ? 0L : 1L;
+            WishDTO wishDTO = new WishDTO(user.getId(), postId, postType);
             wishes.add(wishDTO);
         });
 
@@ -75,7 +75,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void chargeNeoPay(ExchangeNeoPayDTO exchangeNeoPayDTO) {
-        UserEntity user = userRepository.findById(exchangeNeoPayDTO.getUserId()).orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_USER));
+        UserEntity user = userRepository.findById(exchangeNeoPayDTO.getUserId())
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_USER));
 
         user.chargePoint(exchangeNeoPayDTO.getPoint());
         UserExchangeLogDTO exchangeLogDTO = UserExchangeLogDTO.builder()
@@ -92,9 +93,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void exchangeNeoPay(ExchangeNeoPayDTO exchangeNeoPayDTO) {
-        UserEntity user = userRepository.findById(exchangeNeoPayDTO.getUserId()).orElseThrow(() -> new IllegalArgumentException("user not found"));
+        UserEntity user = userRepository.findById(exchangeNeoPayDTO.getUserId())
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_USER));
 
-        if(user.getPoint() < exchangeNeoPayDTO.getPoint()) {
+        if (user.getPoint() < exchangeNeoPayDTO.getPoint()) {
             UserExchangeLogDTO exchangeFailLogDTO = UserExchangeLogDTO.builder()
                     .userId(user.getId())
                     .exchangeAmount(exchangeNeoPayDTO.getPoint())
@@ -118,6 +120,20 @@ public class UserServiceImpl implements UserService {
         recordExchangeLog(exchangeSuccessLogDTO);
 
         userRepository.save(user);
+    }
+
+    private UserInfoDTO toUserInfoDTO(UserEntity user) {
+        return UserInfoDTO.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .email(user.getEmail())
+                .picture(user.getPicture())
+                .nickname(user.getNickname())
+                .address(user.getAddress())
+                .accountNumber(user.getAccountNumber())
+                .bankName(user.getBankName())
+                .point(user.getPoint())
+                .build();
     }
 
 }

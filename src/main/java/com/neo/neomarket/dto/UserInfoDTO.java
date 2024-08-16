@@ -9,6 +9,9 @@ import lombok.*;
 @Builder
 public class UserInfoDTO {
 
+    @Schema(description = "유저 아이디")
+    private Long id;
+
     @Schema(description = "유저 이름")
     private String name;
 

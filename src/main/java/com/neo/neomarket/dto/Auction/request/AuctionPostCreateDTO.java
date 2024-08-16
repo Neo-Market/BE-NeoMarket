@@ -3,6 +3,7 @@ package com.neo.neomarket.dto.Auction.request;
 
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -16,7 +17,7 @@ public class AuctionPostCreateDTO {
     private String content;
     private Long startPrice;
     private Long currentPrice;
-    private String deadline;
+    private LocalDateTime deadline;
     private String category;
     private Long userId;
 
