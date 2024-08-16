@@ -23,7 +23,7 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/", "/api/login", "/api/users", "/login", "/login/oauth2/code/google",
+                        .requestMatchers("/**", "/api/login", "/api/users", "/login", "/login/oauth2/code/google",
                                 "/oauth2/authorization/google")
                         .permitAll()
                         .anyRequest().authenticated()
