@@ -12,17 +12,20 @@ import java.time.Instant;
 @Document(indexName = "user_log")
 public class UserLogEntity {
     @Id
-    private Long id;
+    private String id;
 
-    @Field(type = FieldType.Long)
-    private Long bidAmount;
+    @Field(name = "pay_type", type = FieldType.Keyword)
+    private String payType;
 
-    @Field(type = FieldType.Keyword)
-    private String category;
+    @Field(name = "exchange_amount", type = FieldType.Long)
+    private Long exchangeAmount;
+
+    @Field(name = "pay_status", type = FieldType.Keyword)
+    private String payStatus;
 
     @Field(type = FieldType.Date, name = "@timestamp")
     private Instant timestamp;
 
-    @Field(type = FieldType.Long)
+    @Field(name = "user_id", type = FieldType.Long)
     private Long userId;
 }

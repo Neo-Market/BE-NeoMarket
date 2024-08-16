@@ -3,6 +3,7 @@ package com.neo.neomarket.entity.mysql;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +17,7 @@ import java.util.List;
 @Entity
 @Table(name="AUCTION_POST")
 public class AuctionPostEntity  extends BaseTimeEntity{
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -26,19 +28,16 @@ public class AuctionPostEntity  extends BaseTimeEntity{
     @Column(nullable = false)
     private String content;
 
-    @Column(nullable = false)
-    private String status;
-
     private Long startPrice;
 
     private Long currentPrice;
 
-    private Long views;
+    @Builder.Default
+    @Column(nullable = false)
+    private Long views = 0L;
 
     @Column(nullable = false)
-    private String deadline;
-
-    private Boolean deleted;
+    private LocalDateTime deadline;
 
     private String category;
 
@@ -49,7 +48,8 @@ public class AuctionPostEntity  extends BaseTimeEntity{
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "auctionPost")
     private final List<WishEntity> wishes =new ArrayList<>();
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "auctionPost")
+    @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, mappedBy = "auctionPost")
     private final List<PictureEntity> pictures = new ArrayList<>();
+
 }
 

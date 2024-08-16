@@ -47,6 +47,11 @@ jobs:
           cd ${{ github.workspace }}/src/main/resources
           echo "${{ secrets.S3_CONFIG }}" > ./application-s3.properties
 
+      - name: Make application-oauth.properties
+        run: |
+          cd ${{ github.workspace }}/src/main/resources
+          echo "${{ secrets.OAUTH_CONFIG }}" > ./application-oauth.properties
+
       - name: Build with Gradle
         run: |
           chmod +x ./gradlew
