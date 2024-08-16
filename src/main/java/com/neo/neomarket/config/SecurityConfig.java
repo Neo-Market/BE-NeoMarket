@@ -20,18 +20,25 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(AbstractHttpConfigurer::disable)
+        http
+                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/**", "/api/login", "/api/users", "/login", "/login/oauth2/code/google")
+                        .requestMatchers("/", "/api/login", "/api/users", "/login", "/login/oauth2/code/google",
+                                "/oauth2/authorization/google")
                         .permitAll()
-                        .requestMatchers("/api/session-user/info").authenticated() // 이 엔드포인트는 인증된 사용자만 접근
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2
+                        .loginPage("/login")
                         .successHandler(oAuth2LoginSuccessHandler)
+                        .failureHandler((request, response, exception) -> {
+                            String frontendUrl = "http://localhost:3000"; // 프론트엔드 URL
+                            response.sendRedirect(frontendUrl + "/login?error=" + exception.getMessage());
+                        })
                 )
                 .logout(logout -> logout
-                        .logoutSuccessUrl("/").permitAll()
+                        .logoutSuccessUrl("/")
+                        .permitAll()
                 );
 
         return http.build();
