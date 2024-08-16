@@ -22,4 +22,6 @@ public class UsedPostCreateDTO {
     private Long userId;
 
     private String category;
+
+    private List<String> pictures;
 }

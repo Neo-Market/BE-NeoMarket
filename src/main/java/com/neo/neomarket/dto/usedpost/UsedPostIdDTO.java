@@ -29,6 +29,8 @@ public class UsedPostIdDTO {
     private Long views;
 
     private String category;
+
+    private List<String> pictures;
 }
 
 

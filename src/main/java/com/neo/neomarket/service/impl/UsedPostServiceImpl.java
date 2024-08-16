@@ -26,6 +26,7 @@ import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
 public class UsedPostServiceImpl implements UsedPostService {
 
     private final UsedPostRepository usedPostRepository;
+    private final WishRepository wishRepository;
     private final UserRepository userRepository;
     private final PictureRepository pictureRepository;
 
@@ -33,6 +34,7 @@ public class UsedPostServiceImpl implements UsedPostService {
     public List<UsedPostDTO> getUsedPosts() {
         // 전체 게시글을 조회
         List<UsedPostEntity> usedPostEntities = usedPostRepository.findAll();
+
         // 게시글이 없으면 예외 발생
         if (usedPostEntities.isEmpty()) {
             return List.of();
@@ -46,6 +48,7 @@ public class UsedPostServiceImpl implements UsedPostService {
                         .createTime(entity.getCreatedDate())
                         .category(entity.getCategory())
                         .nickname(entity.getUser().getNickname())
+                        .picture(entity.getPictures().get(0).getUrl())
                         .build())
                 .toList();
     }
@@ -67,6 +70,7 @@ public class UsedPostServiceImpl implements UsedPostService {
                 .createTime(findPost.getCreatedDate())
                 .views(findPost.getViews())
                 .category(findPost.getCategory())
+                .pictures(pictureUrls)
                 .build();
 
         return usedPostIdDTO;
@@ -86,10 +90,16 @@ public class UsedPostServiceImpl implements UsedPostService {
                 .user(user)
                 .build();
 
+        usedPostCreateDTO.getPictures().forEach(picture -> {
+            PictureEntity pictureEntity = PictureEntity.builder().url(picture).build();
+            usedPostEntity.getPictures().add(pictureEntity);
+        });
+
         // Entity를 데이터베이스에 저장
         UsedPostEntity create = usedPostRepository.save(usedPostEntity);
 
         return create.getId();
+
     }
 
     // 게시글 수정
@@ -97,6 +107,11 @@ public class UsedPostServiceImpl implements UsedPostService {
     public void updatePost(Long id, UsedPostUpdateDTO usedPostUpdateDTO) {
         // 게시글을 ID로 조회합니다.
         UsedPostEntity uPost = usedPostRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_POST));
+
+        UsedPostEntity upPost = usedPostUpdateDTO.toEntity(uPost);
+
+        // 업데이트된 게시글을 저장합니다.
+        usedPostRepository.save(upPost);
 
     }
 

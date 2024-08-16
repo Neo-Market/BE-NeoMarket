@@ -22,4 +22,6 @@ public class UsedPostDTO  {
 
     private String category;
 
+    private String picture;
+
 }
