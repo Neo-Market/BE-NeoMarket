@@ -25,6 +25,7 @@ public enum ErrorCode {
     NOT_EXIST_POSTTYPE(HttpStatus.NOT_FOUND,"잘못된 게시글 유형입니다.");
 
 
+
     private final HttpStatus httpStatus;
     private final String msg;
 }

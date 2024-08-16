@@ -22,3 +22,4 @@ public interface AuctionService {
     void bidAction(BidRequestDTO bidRequestDTO);
     void bidSuccessAction(Long postId);
 }
+

@@ -1,13 +1,20 @@
 package com.neo.neomarket.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class UserInfoDTO {
+
+
+    @Schema(description = "유저 아이디")
+    private Long id;
 
     @Schema(description = "유저 이름")
     private String name;
@@ -32,4 +39,5 @@ public class UserInfoDTO {
 
     @Schema(description = "유저 네오 포인트")
     private Long point;
+
 }

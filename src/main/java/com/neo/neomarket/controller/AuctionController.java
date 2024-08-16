@@ -1,19 +1,12 @@
 package com.neo.neomarket.controller;
 
 
-import com.neo.neomarket.dto.Auction.request.AuctionPostCreateDTO;
-import com.neo.neomarket.dto.response.AuctionPostDTO;
-import com.neo.neomarket.dto.response.AuctionPostReadDTO;
-import com.neo.neomarket.dto.Auction.request.AuctionPostUpdateDTO;
 import com.neo.neomarket.dto.BidRequestDTO;
 import com.neo.neomarket.service.AuctionService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 
 @Tag(name = "Auction API", description = "Auction Controller")
@@ -23,6 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api")
 public class AuctionController {
+
 
     private final AuctionService auctionService;
 
@@ -66,6 +60,10 @@ public class AuctionController {
 
     }
 
+
+    private final AuctionService auctionService;
+
+
     @PostMapping("/auction/bid")
     ResponseEntity<Void> bidAuction(@RequestBody BidRequestDTO bidRequestDTO){
         auctionService.bidAction(bidRequestDTO);
@@ -76,6 +74,9 @@ public class AuctionController {
     ResponseEntity<Void> bidAuctionSuccess(@RequestParam(name = "id")Long postId){
         auctionService.bidSuccessAction(postId);
         return ResponseEntity.ok().build();
+
+
+
 
     }
 

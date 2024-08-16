@@ -20,6 +20,7 @@ import com.neo.neomarket.dto.BidLogDTO;
 import com.neo.neomarket.dto.BidRequestDTO;
 import com.neo.neomarket.entity.elasticsearch.AuctionLogEntity;
 import com.neo.neomarket.repository.elasticsearch.AuctionLogRepository;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -41,6 +42,7 @@ public class AuctionServiceImpl implements AuctionService {
     private final UserRepository userRepository;
     private final PictureRepository pictureRepository;
     private final AuctionLogRepository auctionLogRepository;
+
 
     @Override
     public void recordBidLog(BidLogDTO bidLogDTO) {
@@ -181,6 +183,7 @@ public class AuctionServiceImpl implements AuctionService {
                         return "/uploads/" + storedFilename; // 예: /uploads/UUID.extension
                     }
 
+
     @Override
     public void bidAction(BidRequestDTO bidRequestDTO) {
 
@@ -225,4 +228,5 @@ public class AuctionServiceImpl implements AuctionService {
                     userRepository.save(user);
                 });
     }
+
 }
