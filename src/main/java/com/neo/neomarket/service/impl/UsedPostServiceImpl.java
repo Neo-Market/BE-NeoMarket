@@ -43,6 +43,7 @@ public class UsedPostServiceImpl implements UsedPostService {
         // Entity 리스트를 DTO 리스트로 변환
         return usedPostEntities.stream()
                 .map(entity -> UsedPostDTO.builder()
+                        .id(entity.getId())
                         .title(entity.getTitle())
                         .price(entity.getPrice())
                         .createTime(entity.getCreatedDate())
