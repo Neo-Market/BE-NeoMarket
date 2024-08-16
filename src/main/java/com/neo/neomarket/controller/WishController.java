@@ -18,44 +18,30 @@ public class WishController {
     @Autowired
     private WishService wishService;
 
-    @PostMapping("/auction/{id}/wish")
-    public ResponseEntity<String> addToWishAuction(@PathVariable Long id, @RequestBody WishDTO wishDTO) {
-        wishDTO.setWishId(id);
-        wishDTO.setPostType(0L);
+    @PostMapping("/auction/wish")
+    public ResponseEntity<String> addToWishAuction( @RequestBody WishDTO wishDTO) {
         wishService.addToWish(wishDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body("Added to wishlist");
     }
 
-    @PostMapping("/used/{id}/wish")
-    public ResponseEntity<String> addToWishUsed(@PathVariable Long id, @RequestBody WishDTO wishDTO) {
-        wishDTO.setWishId(id);
-        wishDTO.setPostType(1L);
+    @PostMapping("/used/wish")
+    public ResponseEntity<String> addToWishUsed(@RequestBody WishDTO wishDTO) {
         wishService.addToWish(wishDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body("Added to wishlist");
     }
 
-    @DeleteMapping("/auction/{id}/wish")
-    public ResponseEntity<String> removeFromWishAuction(@PathVariable Long id, @RequestBody WishDTO wishDTO) {
-        wishDTO.setWishId(id);
-        wishDTO.setPostType(0L);
+    @DeleteMapping("/auction/wish")
+    public ResponseEntity<String> removeFromWishAuction( @RequestBody WishDTO wishDTO) {
         wishService.removeFromWish(wishDTO);
         return ResponseEntity.ok("Removed from wishlist");
     }
 
-    @DeleteMapping("/used/{id}/wish")
-    public ResponseEntity<String> removeFromWishUsed(@PathVariable Long id, @RequestBody WishDTO wishDTO) {
-        wishDTO.setWishId(id);
-        wishDTO.setPostType(1L);
+    @DeleteMapping("/used/wish")
+    public ResponseEntity<String> removeFromWishUsed( @RequestBody WishDTO wishDTO) {
         wishService.removeFromWish(wishDTO);
         return ResponseEntity.ok("Removed from wishlist");
     }
 
-    @GetMapping("/wish/{userId}/search")
-    public ResponseEntity<List<WishDTO>> findWishByTitle(@PathVariable Long userId, @RequestParam Long title) {
-        List<WishDTO> wishes = wishService.findWishByTitle(userId, title);
-        if (wishes.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
-        return ResponseEntity.ok(wishes);
-    }
+
+
 }

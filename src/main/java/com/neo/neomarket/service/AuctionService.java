@@ -16,9 +16,8 @@ public interface AuctionService {
     void recordBidLog(BidLogDTO bidLogDTO);
     List<AuctionPostDTO> getAuctionPosts();
     AuctionPostReadDTO getAuctionPostById(Long id);
-    void updateAuctionPost(Long id, AuctionPostUpdateDTO auctionPostUpdateDTO);
     void deleteAuctionPost(Long id);
-    Long createAuctionPost(AuctionPostCreateDTO auctionPostCreateDTO, List<MultipartFile> pictures);
+    Long createAuctionPost(AuctionPostCreateDTO auctionPostCreateDTO);
     void bidAction(BidRequestDTO bidRequestDTO);
     void bidSuccessAction(Long postId);
 }

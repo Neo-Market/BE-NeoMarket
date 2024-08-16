@@ -98,7 +98,7 @@ public class AuctionServiceImpl implements AuctionService {
     // 게시글 생성
 
     @Override
-    public Long createAuctionPost(AuctionPostCreateDTO auctionPostCreateDTO, List<MultipartFile> pictures) {
+    public Long createAuctionPost(AuctionPostCreateDTO auctionPostCreateDTO) {
         UserEntity user = userRepository.findById(auctionPostCreateDTO.getUserId())
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_USER));
 
@@ -112,42 +112,18 @@ public class AuctionServiceImpl implements AuctionService {
                 .user(user)
                 .build();
 
-        // PictureEntity 리스트 생성
-        if (pictures != null && !pictures.isEmpty()) {
-            for (MultipartFile picture : pictures) {
-                try {
-                    String url = saveFile(picture);
-                    PictureEntity pictureEntity = PictureEntity.builder()
-                            .url(url)
-                            .auctionPost(auctionPostEntity)
-                            .build();
-                    auctionPostEntity.getPictures().add(pictureEntity);
-                } catch (IOException e) {
-                    throw new CustomException(ErrorCode.FILE_UPLOAD_ERROR);
-                }
-            }
-        }
+        auctionPostCreateDTO.getPictureUrls().forEach(pictureUrl -> {
+            PictureEntity pictureEntity = PictureEntity.builder().url(pictureUrl).build();
+            auctionPostEntity.getPictures().add(pictureEntity);
+        });
+
+
 
         // 게시글 저장
         AuctionPostEntity savedEntity = auctionPostRepository.save(auctionPostEntity);
         return savedEntity.getId(); // ID 반환
     }
 
-                // 게시글 업데이트
-                @Override
-                public void updateAuctionPost(Long id, AuctionPostUpdateDTO auctionPostUpdateDTO) {
-                        AuctionPostEntity auctionPostEntity = auctionPostRepository.findById(id)
-                                .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_POST));
-
-                        // DTO의 값으로 엔티티 업데이트
-                        auctionPostEntity.setTitle(auctionPostUpdateDTO.getTitle());
-                        auctionPostEntity.setContent(auctionPostUpdateDTO.getContent());
-                        auctionPostEntity.setCategory(auctionPostUpdateDTO.getCategory());
-
-                        auctionPostRepository.save(auctionPostEntity);
-
-
-                    }
 
                     // 게시글 삭제
                     @Override

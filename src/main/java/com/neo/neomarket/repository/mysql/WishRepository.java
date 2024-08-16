@@ -13,7 +13,4 @@ public interface WishRepository extends JpaRepository<WishEntity, Long> {
     Optional<WishEntity> findByUserIdAndAuctionPostId(Long userId, Long auctionPostId);
     Optional<WishEntity> findByUserIdAndUsedPostId(Long userId, Long usedPostId);
 
-    List<WishEntity> findByUserIdAndAuctionPost_Id(Long userId, Long title);
-    List<WishEntity> findByUserIdAndUsedPost_Id(Long userId, Long title);
-    // List<WishEntity> findAllByUserId(Long userId); 리스트 조회할 때 userid로 할지 게시글 title로 할지
 }

@@ -45,19 +45,14 @@ public class AuctionController {
 
     //create
     @PostMapping("/auction")
-    public ResponseEntity<Long> createAuction(
+    public ResponseEntity<Long> createAuctionPost (@RequestBody AuctionPostCreateDTO auctionPostCreateDTO) {
 
-            @RequestParam("auctionPost") AuctionPostCreateDTO auctionPostCreateDTO,
-            @RequestParam("pictures") List<MultipartFile> pictures) {
-        Long createdPost = auctionService.createAuctionPost(auctionPostCreateDTO, pictures);
+
+        Long createdPost = auctionService.createAuctionPost(auctionPostCreateDTO);
         return ResponseEntity.ok().body(createdPost);
     }
-    //update
-    @PutMapping("/auction/{id}")
-    public ResponseEntity<Void> updateAuction(@PathVariable Long id, @RequestBody AuctionPostUpdateDTO auctionPostUpdateDTO) {
-        auctionService.updateAuctionPost(id, auctionPostUpdateDTO);
-        return ResponseEntity.ok().build();
-    }
+
+
 
     //delete
     @DeleteMapping("/auction/{id}")
