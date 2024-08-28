@@ -87,7 +87,7 @@ public class UserController {
     @GetMapping("/users/{id}/info")
     public ResponseEntity<UserInfoDTO> userInfo(@AuthenticationPrincipal OAuth2User principal,
                                                 @PathVariable Long id) {
-        UserInfoDTO userInfoDTO = userService.userInfo(principal, id);
+        UserInfoDTO userInfoDTO = userService.getUserInfo(principal, id);
 
         return ResponseEntity.ok().body(userInfoDTO);
     }
