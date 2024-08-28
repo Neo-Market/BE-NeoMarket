@@ -1,9 +1,9 @@
 package com.neo.neomarket.service.impl;
+
 import com.neo.neomarket.dto.usedpost.UsedPostCreateDTO;
 import com.neo.neomarket.dto.usedpost.UsedPostDTO;
 import com.neo.neomarket.dto.usedpost.UsedPostIdDTO;
 import com.neo.neomarket.dto.usedpost.UsedPostUpdateDTO;
-import com.neo.neomarket.entity.mysql.PictureEntity;
 import com.neo.neomarket.entity.mysql.UsedPostEntity;
 import com.neo.neomarket.entity.mysql.UserEntity;
 import com.neo.neomarket.exception.CustomException;
@@ -19,8 +19,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
-
 @RequiredArgsConstructor
 @Service
 public class UsedPostServiceImpl implements UsedPostService {
@@ -32,15 +30,12 @@ public class UsedPostServiceImpl implements UsedPostService {
 
     @Override
     public List<UsedPostDTO> getUsedPosts() {
-        // 전체 게시글을 조회
         List<UsedPostEntity> usedPostEntities = usedPostRepository.findAll();
 
-        // 게시글이 없으면 예외 발생
         if (usedPostEntities.isEmpty()) {
             return List.of();
         }
 
-        // Entity 리스트를 DTO 리스트로 변환
         return usedPostEntities.stream()
                 .map(entity -> UsedPostDTO.builder()
                         .id(entity.getId())
@@ -53,7 +48,6 @@ public class UsedPostServiceImpl implements UsedPostService {
                 .toList();
     }
 
-    // ID로 게시글 조회
     @Override
     public UsedPostIdDTO findPostById(Long id) {
         // 게시글을 ID로 조회합니다.
@@ -75,7 +69,6 @@ public class UsedPostServiceImpl implements UsedPostService {
         return usedPostIdDTO;
     }
 
-    // 게시글 생성
     @Override
     public UsedPostCreateDTO createPost(UsedPostCreateDTO usedPostCreateDTO) {
         UserEntity user = userRepository.findById(usedPostCreateDTO.getUserId()).orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_USER));
@@ -86,7 +79,6 @@ public class UsedPostServiceImpl implements UsedPostService {
                 .category(usedPostCreateDTO.getCategory())
                 .content(usedPostCreateDTO.getContent())
                 .price(usedPostCreateDTO.getPrice())
-                .status(usedPostCreateDTO.getStatus())
                 .user(user)
                 .build();
 
@@ -95,35 +87,44 @@ public class UsedPostServiceImpl implements UsedPostService {
 
         // 저장된 Entity를 다시 DTO로 변환하여 반환
         UsedPostCreateDTO CreateDTO = UsedPostCreateDTO.builder()
+                .title(create.getTitle())
+                .category(create.getCategory())
+                .content(create.getContent())
+                .price(create.getPrice())
                 .userId(create.getUser().getId())
                 .build();
 
         return CreateDTO;
     }
 
-    // 게시글 수정
     @Override
     public void updatePost(Long id, UsedPostUpdateDTO usedPostUpdateDTO) {
         // 게시글을 ID로 조회합니다.
-        UsedPostEntity uPost = usedPostRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_POST));
+        UsedPostEntity upost = usedPostRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_POST));
 
         // 게시글이 존재하는 경우, 업데이트할 필드를 설정합니다.
-        uPost.setTitle(usedPostUpdateDTO.getTitle());
-        uPost.setCategory(usedPostUpdateDTO.getCategory());
-        uPost.setContent(usedPostUpdateDTO.getContent());
-        uPost.setPrice(usedPostUpdateDTO.getPrice());
-        uPost.setStatus(usedPostUpdateDTO.getStatus());
+        upost.setTitle(usedPostUpdateDTO.getTitle());
+        upost.setCategory(usedPostUpdateDTO.getCategory());
+        upost.setContent(usedPostUpdateDTO.getContent());
+        upost.setPrice(usedPostUpdateDTO.getPrice());
 
         // 업데이트된 게시글을 저장합니다.
-        UsedPostEntity updatedPost = usedPostRepository.save(uPost);
+        UsedPostEntity updatedPost = usedPostRepository.save(upost);
+
+        // Entity를 DTO로 변환하여 반환합니다.
+        UsedPostUpdateDTO UpdatDTO = UsedPostUpdateDTO.builder()
+                .title(updatedPost.getTitle())
+                .category(updatedPost.getCategory())
+                .content(updatedPost.getContent())
+                .price(updatedPost.getPrice())
+                .build();
 
     }
 
-    // 게시글 삭제
     @Override
     public void deletePost(Long id) {
-        if(!usedPostRepository.existsById(id)){
-            throw new CustomException(ErrorCode.NOT_EXIST_POST);
+        if (!usedPostRepository.existsById(id)) {
+            throw new RuntimeException("게시물이 없습니다.");
         }
         usedPostRepository.deleteById(id);
     }

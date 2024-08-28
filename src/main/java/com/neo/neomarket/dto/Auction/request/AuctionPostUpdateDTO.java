@@ -1,6 +1,5 @@
 package com.neo.neomarket.dto.Auction.request;
 
-
 import lombok.*;
 
 import java.util.List;
@@ -11,6 +10,7 @@ import java.util.List;
 @NoArgsConstructor
 @Setter
 public class AuctionPostUpdateDTO {
+
     private String title;
     private List<String> pictureUrls;
     private String content;

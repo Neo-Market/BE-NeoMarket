@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @RequiredArgsConstructor
@@ -33,7 +32,7 @@ public class HomeServiceImpl implements HomeService {
                         .imgUrl(post.getPictures().isEmpty() ? null : post.getPictures().get(0).getUrl())  // 첫 번째 이미지를 사용
                         .wish((long) post.getWishes().size())
                         .build())
-                .collect(Collectors.toList());
+                .toList();
 
         List<RecentPostDTO> usedPosts = usedPostRepository.findAllByOrderByCreatedDateDesc()
                 .stream()
@@ -46,11 +45,11 @@ public class HomeServiceImpl implements HomeService {
                         .imgUrl(post.getPictures().isEmpty() ? null : post.getPictures().get(0).getUrl())  // 첫 번째 이미지를 사용
                         .wish((long) post.getWishes().size())
                         .build())
-                .collect(Collectors.toList());
+                .toList();
 
         return Stream.concat(auctionPosts.stream(), usedPosts.stream())
                 .sorted((p1, p2) -> p2.getCreatedDate().compareTo(p1.getCreatedDate()))  // createdAt 기준으로 내림차순 정렬
                 .limit(4)  // 상위 4개의 포스트만 가져옴
-                .collect(Collectors.toList());
+                .toList();
     }
 }

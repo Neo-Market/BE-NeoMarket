@@ -35,11 +35,11 @@ public class UsedPostEntity extends BaseTimeEntity {
 
     private String category;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, mappedBy = "usedPost")
-    private final List<PictureEntity> pictures = new ArrayList<>();
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "usedPost")
+    private List<PictureEntity> pictures = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "usedPost")
-    private final List<WishEntity> wishes = new ArrayList<>();
+    private List<WishEntity> wishes = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)

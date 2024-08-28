@@ -39,7 +39,6 @@ public class AuctionPostEntity  extends BaseTimeEntity{
     @Column(nullable = false)
     private LocalDateTime deadline;
 
-
     private String category;
 
     @ManyToOne

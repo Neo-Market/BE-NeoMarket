@@ -8,24 +8,23 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 
 import java.time.Instant;
 
-
 @Getter
 @Document(indexName = "auction_log")
 public class AuctionLogEntity {
     @Id
-    private Long id;
+    private String id;
+
+    @Field(name = "bid_amount", type = FieldType.Long)
+    private Long bidAmount;
 
     @Field(type = FieldType.Keyword)
-    private String payType;
+    private String category;
 
-    @Field(type = FieldType.Long)
-    private Long exchangeAmount;
-
-    @Field(type = FieldType.Keyword)
-    private String payStatus;
-
-    @Field(type = FieldType.Long)
+    @Field(name = "user_id", type = FieldType.Long)
     private Long userId;
+
+    @Field(name = "post_id", type = FieldType.Long)
+    private Long postId;
 
     @Field(type = FieldType.Date, name = "@timestamp")
     private Instant timestamp;

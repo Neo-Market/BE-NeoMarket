@@ -1,7 +1,5 @@
 package com.neo.neomarket.dto;
 
-import com.neo.neomarket.controller.WishController;
-import com.neo.neomarket.entity.mysql.WishEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
