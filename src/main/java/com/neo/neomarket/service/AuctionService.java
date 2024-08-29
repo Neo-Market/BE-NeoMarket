@@ -1,12 +1,12 @@
 package com.neo.neomarket.service;
 
-import com.neo.neomarket.dto.Auction.request.AuctionPostCreateDTO;
-import com.neo.neomarket.dto.Auction.request.AuctionPostUpdateDTO;
+import com.neo.neomarket.dto.auctionPost.request.AuctionPostCreateDTO;
+import com.neo.neomarket.dto.auctionPost.request.AuctionPostUpdateDTO;
 
-import com.neo.neomarket.dto.Auction.request.response.AuctionPostDTO;
-import com.neo.neomarket.dto.Auction.request.response.AuctionPostReadDTO;
-import com.neo.neomarket.dto.BidLogDTO;
-import com.neo.neomarket.dto.BidRequestDTO;
+import com.neo.neomarket.dto.auctionPost.response.AuctionPostDTO;
+import com.neo.neomarket.dto.auctionPost.response.AuctionPostReadDTO;
+import com.neo.neomarket.dto.bid.BidLogDTO;
+import com.neo.neomarket.dto.bid.BidRequestDTO;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
