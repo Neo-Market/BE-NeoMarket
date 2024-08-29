@@ -1,9 +1,9 @@
 package com.neo.neomarket.service.impl;
 
-import com.neo.neomarket.dto.ExchangeNeoPayDTO;
-import com.neo.neomarket.dto.UserExchangeLogDTO;
-import com.neo.neomarket.dto.UserInfoDTO;
-import com.neo.neomarket.dto.UserSaveDTO;
+import com.neo.neomarket.dto.user.ExchangeNeoPayDTO;
+import com.neo.neomarket.dto.user.UserExchangeLogDTO;
+import com.neo.neomarket.dto.user.UserInfoDTO;
+import com.neo.neomarket.dto.user.UserSaveDTO;
 import com.neo.neomarket.dto.WishDTO;
 import com.neo.neomarket.entity.mysql.UserEntity;
 import com.neo.neomarket.exception.CustomException;

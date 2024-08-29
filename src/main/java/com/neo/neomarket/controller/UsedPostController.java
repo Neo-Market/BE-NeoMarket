@@ -1,9 +1,9 @@
 package com.neo.neomarket.controller;
 
-import com.neo.neomarket.dto.usedpost.UsedPostCreateDTO;
-import com.neo.neomarket.dto.usedpost.UsedPostDTO;
-import com.neo.neomarket.dto.usedpost.UsedPostIdDTO;
-import com.neo.neomarket.dto.usedpost.UsedPostUpdateDTO;
+import com.neo.neomarket.dto.usedPost.UsedPostCreateDTO;
+import com.neo.neomarket.dto.usedPost.UsedPostDTO;
+import com.neo.neomarket.dto.usedPost.UsedPostIdDTO;
+import com.neo.neomarket.dto.usedPost.UsedPostUpdateDTO;
 import com.neo.neomarket.exception.CustomException;
 import com.neo.neomarket.service.UsedPostService;
 import lombok.RequiredArgsConstructor;

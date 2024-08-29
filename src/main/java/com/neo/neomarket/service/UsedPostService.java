@@ -1,9 +1,9 @@
 package com.neo.neomarket.service;
 
-import com.neo.neomarket.dto.usedpost.UsedPostCreateDTO;
-import com.neo.neomarket.dto.usedpost.UsedPostDTO;
-import com.neo.neomarket.dto.usedpost.UsedPostIdDTO;
-import com.neo.neomarket.dto.usedpost.UsedPostUpdateDTO;
+import com.neo.neomarket.dto.usedPost.UsedPostCreateDTO;
+import com.neo.neomarket.dto.usedPost.UsedPostDTO;
+import com.neo.neomarket.dto.usedPost.UsedPostIdDTO;
+import com.neo.neomarket.dto.usedPost.UsedPostUpdateDTO;
 
 import java.util.List;
 

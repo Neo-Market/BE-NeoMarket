@@ -1,11 +1,11 @@
 package com.neo.neomarket.service.impl;
 
-import com.neo.neomarket.dto.Auction.request.AuctionPostCreateDTO;
-import com.neo.neomarket.dto.Auction.request.AuctionPostUpdateDTO;
-import com.neo.neomarket.dto.Auction.request.response.AuctionPostDTO;
-import com.neo.neomarket.dto.Auction.request.response.AuctionPostReadDTO;
-import com.neo.neomarket.dto.BidLogDTO;
-import com.neo.neomarket.dto.BidRequestDTO;
+import com.neo.neomarket.dto.auctionPost.request.AuctionPostCreateDTO;
+import com.neo.neomarket.dto.auctionPost.request.AuctionPostUpdateDTO;
+import com.neo.neomarket.dto.auctionPost.response.AuctionPostDTO;
+import com.neo.neomarket.dto.auctionPost.response.AuctionPostReadDTO;
+import com.neo.neomarket.dto.bid.BidLogDTO;
+import com.neo.neomarket.dto.bid.BidRequestDTO;
 import com.neo.neomarket.entity.elasticsearch.AuctionLogEntity;
 import com.neo.neomarket.entity.mysql.AuctionPostEntity;
 import com.neo.neomarket.entity.mysql.PictureEntity;

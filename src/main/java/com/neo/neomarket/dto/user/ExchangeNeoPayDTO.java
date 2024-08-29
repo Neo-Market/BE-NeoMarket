@@ -1,4 +1,4 @@
-package com.neo.neomarket.dto;
+package com.neo.neomarket.dto.user;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;

@@ -1,4 +1,4 @@
-package com.neo.neomarket.dto.usedpost;
+package com.neo.neomarket.dto.bid;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,14 +9,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UsedPostUpdateDTO {
-    private String title;
+public class BidLogDTO {
 
-    private String content;
-
-    private Long price;
-
+    private Long userId;
+    private Long postId;
+    private Long bidAmount;
     private String category;
 
-    private String status;
 }
