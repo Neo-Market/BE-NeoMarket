@@ -1,7 +1,5 @@
-package com.neo.neomarket.dto.usedpost;
+package com.neo.neomarket.dto.usedPost;
 
-import java.time.LocalDateTime;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,19 +9,15 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-// 특정 id로 게시물 조회
-public class UsedPostIdDTO {
+// 게시물 생성시 필요한 DTO
+public class UsedPostCreateDTO {
     private String title;
 
     private String content;
 
     private Long price;
 
-    private String nickname;
-
-    private LocalDateTime createTime;
-
-    private Long views;
+    private Long userId;
 
     private String category;
 }

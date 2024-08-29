@@ -1,4 +1,4 @@
-package com.neo.neomarket.dto;
+package com.neo.neomarket.dto.user;
 
 import com.neo.neomarket.entity.mysql.Role;
 import com.neo.neomarket.entity.mysql.UserEntity;

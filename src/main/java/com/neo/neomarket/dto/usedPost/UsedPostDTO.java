@@ -1,4 +1,4 @@
-package com.neo.neomarket.dto.usedpost;
+package com.neo.neomarket.dto.usedPost;
 
 import lombok.*;
 

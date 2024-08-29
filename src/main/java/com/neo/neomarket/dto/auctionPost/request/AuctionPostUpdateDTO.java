@@ -1,4 +1,4 @@
-package com.neo.neomarket.dto.Auction.request;
+package com.neo.neomarket.dto.auctionPost.request;
 
 import lombok.*;
 

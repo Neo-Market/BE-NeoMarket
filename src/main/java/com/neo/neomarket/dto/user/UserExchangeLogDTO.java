@@ -1,4 +1,4 @@
-package com.neo.neomarket.dto;
+package com.neo.neomarket.dto.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,10 +9,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class BidRequestDTO {
+public class UserExchangeLogDTO {
     private Long userId;
 
-    private Long postId;
+    private Long exchangeAmount;
 
-    private Long bidAmount;
+    private String payType;
+
+    private String payStatus;
 }

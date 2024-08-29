@@ -1,4 +1,4 @@
-package com.neo.neomarket.dto.Auction.request.response;
+package com.neo.neomarket.dto.auctionPost.request;
 
 import lombok.*;
 
@@ -10,16 +10,15 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
-public class AuctionPostReadDTO {
+public class AuctionPostCreateDTO {
 
-    private Long id;
     private String title;
     private List<String> pictureUrls;
     private String content;
-    private LocalDateTime deadline;
-    private String category;
     private Long startPrice;
     private Long currentPrice;
-    private String nickname;
+    private LocalDateTime deadline;
+    private String category;
+    private Long userId;
 
 }
