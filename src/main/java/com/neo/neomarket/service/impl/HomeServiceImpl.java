@@ -1,6 +1,6 @@
 package com.neo.neomarket.service.impl;
 
-import com.neo.neomarket.dto.RecentPostDTO;
+import com.neo.neomarket.dto.home.RecentPostShowDTO;
 import com.neo.neomarket.repository.mysql.AuctionPostRepository;
 import com.neo.neomarket.repository.mysql.UsedPostRepository;
 import com.neo.neomarket.service.HomeService;
@@ -20,30 +20,32 @@ public class HomeServiceImpl implements HomeService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<RecentPostDTO> getRecentPosts(){
-        List<RecentPostDTO> auctionPosts = auctionPostRepository.findAllByOrderByCreatedDateDesc()
+    public List<RecentPostShowDTO> getRecentPosts() {
+        List<RecentPostShowDTO> auctionPosts = auctionPostRepository.findAllByOrderByLastModifiedDateDesc()
                 .stream()
-                .map(post -> RecentPostDTO.builder()
-                        .createdDate(post.getCreatedDate())
+                .map(post -> RecentPostShowDTO.builder()
                         .postId(post.getId())
                         .postType("경매")
                         .postTitle(post.getTitle())
                         .price(post.getCurrentPrice())
-                        .imgUrl(post.getPictures().isEmpty() ? null : post.getPictures().get(0).getUrl())  // 첫 번째 이미지를 사용
+                        .imgUrl(post.getPictures().isEmpty() ? null
+                                : post.getPictures().get(0).getUrl())  // 첫 번째 이미지를 사용
                         .wish((long) post.getWishes().size())
+                        .createdDate(post.getCreatedDate())
                         .build())
                 .toList();
 
-        List<RecentPostDTO> usedPosts = usedPostRepository.findAllByOrderByCreatedDateDesc()
+        List<RecentPostShowDTO> usedPosts = usedPostRepository.findAllByOrderByLastModifiedDateDesc()
                 .stream()
-                .map(post -> RecentPostDTO.builder()
-                        .createdDate(post.getCreatedDate())
+                .map(post -> RecentPostShowDTO.builder()
                         .postId(post.getId())
                         .postType("중고")
                         .postTitle(post.getTitle())
                         .price(post.getPrice())
-                        .imgUrl(post.getPictures().isEmpty() ? null : post.getPictures().get(0).getUrl())  // 첫 번째 이미지를 사용
+                        .imgUrl(post.getPictures().isEmpty() ? null
+                                : post.getPictures().get(0).getUrl())  // 첫 번째 이미지를 사용
                         .wish((long) post.getWishes().size())
+                        .createdDate(post.getCreatedDate())
                         .build())
                 .toList();
 

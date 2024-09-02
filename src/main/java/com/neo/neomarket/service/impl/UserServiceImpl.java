@@ -1,10 +1,10 @@
 package com.neo.neomarket.service.impl;
 
+import com.neo.neomarket.dto.home.PostShowDTO;
 import com.neo.neomarket.dto.user.ExchangeNeoPayDTO;
 import com.neo.neomarket.dto.user.UserExchangeLogDTO;
 import com.neo.neomarket.dto.user.UserInfoDTO;
 import com.neo.neomarket.dto.user.UserSaveDTO;
-import com.neo.neomarket.dto.WishDTO;
 import com.neo.neomarket.entity.mysql.UserEntity;
 import com.neo.neomarket.exception.CustomException;
 import com.neo.neomarket.exception.ErrorCode;
@@ -17,14 +17,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @RequiredArgsConstructor
 @Service
 public class UserServiceImpl implements UserService {
+
     private final UserRepository userRepository;
 
     @Override
+    @Transactional
     public Long createUser(OAuth2User principal, UserSaveDTO userSaveDTO) {
         return userRepository.save(userSaveDTO.toEntity(principal)).getId();
     }
@@ -35,16 +38,52 @@ public class UserServiceImpl implements UserService {
         UserEntity user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_USER));
 
-        return toUserInfoDTO(user);
+        return user.toUserInfoDTO();
     }
 
     @Override
     public UserInfoDTO getUserInfo(OAuth2User principal, Long id) {
-        // You might want to add authorization check here
         UserEntity user = userRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_USER));
 
-        return toUserInfoDTO(user);
+        return user.toUserInfoDTO();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<PostShowDTO> findAllWish(Long id) {
+        UserEntity user = userRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_USER));
+
+        List<PostShowDTO> postShowDTOList = new ArrayList<>();
+
+        user.getWishes().forEach(wish -> {
+            PostShowDTO.PostShowDTOBuilder dtoBuilder = PostShowDTO.builder();
+
+            if (wish.getAuctionPost() != null) {
+                dtoBuilder.postId(wish.getAuctionPost().getId())
+                        .postType("경매")
+                        .postTitle(wish.getAuctionPost().getTitle())
+                        .price(wish.getAuctionPost().getCurrentPrice())
+                        .imgUrl(wish.getAuctionPost().getPictures().isEmpty() ? null
+                                : wish.getAuctionPost().getPictures().get(0).getUrl())
+                        .wish((long) wish.getAuctionPost().getWishes().size())
+                        .createdDate(wish.getAuctionPost().getCreatedDate());
+            } else if (wish.getUsedPost() != null) {
+                dtoBuilder.postId(wish.getUsedPost().getId())
+                        .postType("중고")
+                        .postTitle(wish.getUsedPost().getTitle())
+                        .price(wish.getUsedPost().getPrice())
+                        .imgUrl(wish.getUsedPost().getPictures().isEmpty() ? null
+                                : wish.getUsedPost().getPictures().get(0).getUrl())
+                        .wish((long) wish.getUsedPost().getWishes().size())
+                        .createdDate(wish.getUsedPost().getCreatedDate());
+            }
+
+            postShowDTOList.add(dtoBuilder.build());
+        });
+
+        return postShowDTOList;
     }
 
     @Override
@@ -54,26 +93,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<WishDTO> findWishAll(Long id) {
-        UserEntity user = userRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_USER));
-
-        List<WishDTO> wishes = new ArrayList<>();
-        user.getWishes().forEach(wish -> {
-            if (wish.getAuctionPost() == null && wish.getUsedPost() == null) {
-                throw new CustomException(ErrorCode.INCORRECT_DATA);
-            }
-            Long postId = (wish.getAuctionPost() != null) ?
-                    wish.getAuctionPost().getId() :
-                    wish.getUsedPost().getId();
-            Long postType = (wish.getAuctionPost() != null) ? 0L : 1L;
-            WishDTO wishDTO = new WishDTO(user.getId(), postId, postType);
-            wishes.add(wishDTO);
-        });
-
-        return wishes;
-    }
-
-    @Override
+    @Transactional
     public void chargeNeoPay(ExchangeNeoPayDTO exchangeNeoPayDTO) {
         UserEntity user = userRepository.findById(exchangeNeoPayDTO.getUserId())
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_USER));
@@ -92,6 +112,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void exchangeNeoPay(ExchangeNeoPayDTO exchangeNeoPayDTO) {
         UserEntity user = userRepository.findById(exchangeNeoPayDTO.getUserId())
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_USER));
@@ -120,20 +141,6 @@ public class UserServiceImpl implements UserService {
         recordExchangeLog(exchangeSuccessLogDTO);
 
         userRepository.save(user);
-    }
-
-    private UserInfoDTO toUserInfoDTO(UserEntity user) {
-        return UserInfoDTO.builder()
-                .id(user.getId())
-                .name(user.getName())
-                .email(user.getEmail())
-                .picture(user.getPicture())
-                .nickname(user.getNickname())
-                .address(user.getAddress())
-                .accountNumber(user.getAccountNumber())
-                .bankName(user.getBankName())
-                .point(user.getPoint())
-                .build();
     }
 
 }
