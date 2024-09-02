@@ -1,9 +1,9 @@
 package com.neo.neomarket.controller;
 
+import com.neo.neomarket.dto.home.PostShowDTO;
 import com.neo.neomarket.dto.user.ExchangeNeoPayDTO;
 import com.neo.neomarket.dto.user.UserSaveDTO;
 import com.neo.neomarket.dto.user.UserInfoDTO;
-import com.neo.neomarket.dto.WishDTO;
 import com.neo.neomarket.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -88,7 +88,6 @@ public class UserController {
     public ResponseEntity<UserInfoDTO> userInfo(@AuthenticationPrincipal OAuth2User principal,
                                                 @PathVariable Long id) {
         UserInfoDTO userInfoDTO = userService.getUserInfo(principal, id);
-
         return ResponseEntity.ok().body(userInfoDTO);
     }
 
@@ -103,7 +102,6 @@ public class UserController {
     @PostMapping("/users/charge")
     public ResponseEntity<Void> chargeNeoPay(@RequestBody ExchangeNeoPayDTO exchangeNeoPayDTO) {
         userService.chargeNeoPay(exchangeNeoPayDTO);
-
         return ResponseEntity.ok().build();
     }
 
@@ -119,7 +117,6 @@ public class UserController {
     @PostMapping("/users/exchange")
     public ResponseEntity<Void> exchangeNeoPay(@RequestBody ExchangeNeoPayDTO exchangeNeoPayDTO) {
         userService.exchangeNeoPay(exchangeNeoPayDTO);
-
         return ResponseEntity.ok().build();
     }
 
@@ -128,16 +125,15 @@ public class UserController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공적으로 위시 리스트를 조회했습니다.",
                     content = @Content(mediaType = "application/json",
-                            array = @ArraySchema(schema = @Schema(implementation = WishDTO.class)))),
+                            array = @ArraySchema(schema = @Schema(implementation = PostShowDTO.class)))),
             @ApiResponse(responseCode = "400", description = "잘못된 요청입니다.", content = @Content),
             @ApiResponse(responseCode = "404", description = "유저를 찾을 수 없습니다.", content = @Content),
             @ApiResponse(responseCode = "422", description = "잘못된 위시리스트 데이터가 있습니다.", content = @Content),
             @ApiResponse(responseCode = "500", description = "서버 에러가 발생했습니다.", content = @Content)
     })
     @GetMapping("/users/{id}/wish")
-    public ResponseEntity<List<WishDTO>> getWishes(@PathVariable(name = "id") Long id) {
-        List<WishDTO> wishes = userService.findWishAll(id);
-
+    public ResponseEntity<List<PostShowDTO>> getWishes(@PathVariable(name = "id") Long id) {
+        List<PostShowDTO> wishes = userService.findAllWish(id);
         return ResponseEntity.ok().body(wishes);
     }
 
