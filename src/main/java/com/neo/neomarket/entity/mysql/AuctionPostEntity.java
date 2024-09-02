@@ -15,8 +15,8 @@ import java.util.List;
 @Builder
 
 @Entity
-@Table(name="AUCTION_POST")
-public class AuctionPostEntity  extends BaseTimeEntity{
+@Table(name = "AUCTION_POST")
+public class AuctionPostEntity extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,8 +28,10 @@ public class AuctionPostEntity  extends BaseTimeEntity{
     @Column(nullable = false)
     private String content;
 
+    @Column(nullable = false)
     private Long startPrice;
 
+    @Column(nullable = false)
     private Long currentPrice;
 
     @Builder.Default
@@ -41,15 +43,15 @@ public class AuctionPostEntity  extends BaseTimeEntity{
 
     private String category;
 
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "auctionPost")
+    private final List<PictureEntity> pictures = new ArrayList<>();
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "auctionPost")
+    private final List<WishEntity> wishes = new ArrayList<>();
+
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
-
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "auctionPost")
-    private final List<WishEntity> wishes =new ArrayList<>();
-
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "auctionPost")
-    private final List<PictureEntity> pictures = new ArrayList<>();
 
 }
 

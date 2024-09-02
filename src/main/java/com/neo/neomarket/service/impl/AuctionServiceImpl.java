@@ -1,9 +1,8 @@
 package com.neo.neomarket.service.impl;
 
-import com.neo.neomarket.dto.auctionPost.request.AuctionPostCreateDTO;
-import com.neo.neomarket.dto.auctionPost.request.AuctionPostUpdateDTO;
-import com.neo.neomarket.dto.auctionPost.response.AuctionPostDTO;
-import com.neo.neomarket.dto.auctionPost.response.AuctionPostReadDTO;
+import com.neo.neomarket.dto.auctionPost.AuctionPostCreateDTO;
+import com.neo.neomarket.dto.auctionPost.AuctionPostShowDTO;
+import com.neo.neomarket.dto.auctionPost.AuctionPostDetailDTO;
 import com.neo.neomarket.dto.bid.BidLogDTO;
 import com.neo.neomarket.dto.bid.BidRequestDTO;
 import com.neo.neomarket.entity.elasticsearch.AuctionLogEntity;
@@ -21,75 +20,58 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-
 
 @RequiredArgsConstructor
 @Service
 public class AuctionServiceImpl implements AuctionService {
+
     private final AuctionPostRepository auctionPostRepository;
     private final UserRepository userRepository;
     private final PictureRepository pictureRepository;
     private final AuctionLogRepository auctionLogRepository;
 
     @Override
-    public void recordBidLog(BidLogDTO bidLogDTO) {
-        Logger logger = LoggerFactory.getLogger("AuctionServiceLogger");
-        logger.info("{}", bidLogDTO);
-    }
-
-    @Override
-    public List<AuctionPostDTO> getAuctionPosts() {
-        List<AuctionPostEntity> auctionPostEntities = auctionPostRepository.findAll();
-        if (auctionPostEntities.isEmpty()) {
-            return List.of();
-        }
-        return auctionPostEntities.stream()
-                .map(entity -> AuctionPostDTO.builder()
-                        .id(entity.getId()) // ID 추가
+    @Transactional(readOnly = true)
+    public List<AuctionPostShowDTO> getAuctionPosts() {
+        List<AuctionPostShowDTO> auctionPostShowDTOList = auctionPostRepository.findAllByOrderByLastModifiedDateDesc()
+                .stream()
+                .map(entity -> AuctionPostShowDTO.builder()
+                        .id(entity.getId())
                         .title(entity.getTitle())
-                        .content(entity.getContent()) // 내용 추가
-                        .startPrice(entity.getStartPrice()) // 시작 가격 추가
-                        .currentPrice(entity.getCurrentPrice()) // 현재 가격 추가
-                        .deadline(entity.getDeadline()) // 마감 기한 추가
-                        .category(entity.getCategory()) // 카테고리 추가
-                        //.picture(entity.getPictures().get(0).getUrl())
-                        //.userId(entity.getUser().getId()) // 사용자 ID 추가
+                        .picture(entity.getPictures().get(0).getUrl())
+                        .content(entity.getContent())
+                        .startPrice(entity.getStartPrice())
+                        .currentPrice(entity.getCurrentPrice())
+                        .deadline(entity.getDeadline())
+                        .category(entity.getCategory())
+                        .nickname(entity.getUser().getNickname())
                         .build())
-                .collect(Collectors.toList());
+                .toList();
+        return auctionPostShowDTOList;
     }
 
     @Override
-    public AuctionPostReadDTO getAuctionPostById(Long id) {
-        AuctionPostEntity auctionPostEntity = auctionPostRepository.findById(id)
+    @Transactional(readOnly = true)
+    public AuctionPostDetailDTO getAuctionPostById(Long id) {
+        AuctionPostEntity findPost = auctionPostRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_POST));
-        UserEntity user = auctionPostEntity.getUser();
-        String nickname = user.getNickname();
+
         List<String> pictureUrls = new ArrayList<>();
-        auctionPostEntity.getPictures().forEach(pictureEntity -> pictureUrls.add(pictureEntity.getUrl()));
-        return AuctionPostReadDTO.builder()
-                .id(auctionPostEntity.getId())
-                .title(auctionPostEntity.getTitle())
-                .content(auctionPostEntity.getContent())
-                .startPrice(auctionPostEntity.getStartPrice())
-                .currentPrice(auctionPostEntity.getCurrentPrice())
-                .deadline(auctionPostEntity.getDeadline())
-                .category(auctionPostEntity.getCategory())
-                .pictureUrls(pictureUrls)
-                .nickname(nickname)
-                .build();
+        findPost.getPictures().forEach(pictureEntity -> pictureUrls.add(pictureEntity.getUrl()));
+
+        return AuctionPostDetailDTO.builder().title(findPost.getTitle()).content(findPost.getContent())
+                .startPrice(findPost.getStartPrice()).currentPrice(findPost.getCurrentPrice())
+                .deadline(findPost.getDeadline()).category(findPost.getCategory())
+                .nickname(findPost.getUser().getNickname()).pictures(pictureUrls).build();
     }
 
     @Override
-    public void updateAuctionPost(Long id, AuctionPostUpdateDTO auctionPostUpdateDTO) {
-
-    }
-
-    @Override
+    @Transactional
     public Long createAuctionPost(AuctionPostCreateDTO auctionPostCreateDTO, List<MultipartFile> pictures) {
         UserEntity user = userRepository.findById(auctionPostCreateDTO.getUserId())
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_USER));
@@ -109,20 +91,21 @@ public class AuctionServiceImpl implements AuctionService {
             auctionPostEntity.getPictures().add(pictureEntity);
         });
 
-        // 게시글 저장
-        AuctionPostEntity savedEntity = auctionPostRepository.save(auctionPostEntity);
-        return savedEntity.getId(); // ID 반환
+        AuctionPostEntity created = auctionPostRepository.save(auctionPostEntity);
+        return created.getId();
     }
 
     @Override
+    @Transactional
     public void deleteAuctionPost(Long id) {
-        if (!auctionPostRepository.existsById(id)) {
-            throw new CustomException(ErrorCode.NOT_EXIST_POST);
-        }
-        auctionPostRepository.deleteById(id); // 엔티티 완전 삭제
+        AuctionPostEntity auctionPostEntity = auctionPostRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_POST));
+
+        auctionPostRepository.deleteById(id);
     }
 
     @Override
+    @Transactional
     public void bidAction(BidRequestDTO bidRequestDTO) {
 
         AuctionPostEntity post = auctionPostRepository.findById(bidRequestDTO.getPostId())
@@ -133,15 +116,14 @@ public class AuctionServiceImpl implements AuctionService {
             throw new CustomException(ErrorCode.BID_AMOUNT_TOO_LOW);
         }
 
-        UserEntity user = userRepository.findById(bidRequestDTO.getUserId()).orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_USER));
-        if (bidRequestDTO.getBidAmount() > user.getPoint()) throw new CustomException(ErrorCode.INSUFFICIENT_BALANCE);
+        UserEntity user = userRepository.findById(bidRequestDTO.getUserId())
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_USER));
+        if (bidRequestDTO.getBidAmount() > user.getPoint()) {
+            throw new CustomException(ErrorCode.INSUFFICIENT_BALANCE);
+        }
 
-        BidLogDTO bidLogDTO = BidLogDTO.builder()
-                .bidAmount(bidRequestDTO.getBidAmount())
-                .category(post.getCategory())
-                .postId(post.getId())
-                .userId(user.getId())
-                .build();
+        BidLogDTO bidLogDTO = BidLogDTO.builder().bidAmount(bidRequestDTO.getBidAmount()).category(post.getCategory())
+                .postId(post.getId()).userId(user.getId()).build();
 
         recordBidLog(bidLogDTO);
 
@@ -153,21 +135,32 @@ public class AuctionServiceImpl implements AuctionService {
     }
 
     @Override
+    @Transactional
     public void bidSuccessAction(Long postId) {
-        AuctionPostEntity post = auctionPostRepository.findById(postId).orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_POST));
+        AuctionPostEntity post = auctionPostRepository.findById(postId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_POST));
         List<AuctionLogEntity> logs = auctionLogRepository.findByPostIdOrderByBidAmountDesc(postId);
-        if (logs.isEmpty()) throw new CustomException(ErrorCode.NO_BID_HISTORY);
+        if (logs.isEmpty()) {
+            throw new CustomException(ErrorCode.NO_BID_HISTORY);
+        }
 
-        UserEntity owner = userRepository.findById(post.getId()).orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_USER));
+        UserEntity owner = userRepository.findById(post.getId())
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_USER));
         owner.chargePoint(logs.get(0).getBidAmount());
         userRepository.save(owner);
 
-        logs.stream().skip(1)
-                .forEach(log -> {
-                    UserEntity user = userRepository.findById(log.getUserId()).orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_USER));
-                    user.chargePoint(log.getBidAmount());
-                    userRepository.save(user);
-                });
+        logs.stream().skip(1).forEach(log -> {
+            UserEntity user = userRepository.findById(log.getUserId())
+                    .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_USER));
+            user.chargePoint(log.getBidAmount());
+            userRepository.save(user);
+        });
+    }
+
+    @Override
+    public void recordBidLog(BidLogDTO bidLogDTO) {
+        Logger logger = LoggerFactory.getLogger("AuctionServiceLogger");
+        logger.info("{}", bidLogDTO);
     }
 
 }

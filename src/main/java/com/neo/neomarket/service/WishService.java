@@ -1,9 +1,9 @@
 package com.neo.neomarket.service;
 
-import com.neo.neomarket.dto.WishDTO;
+import com.neo.neomarket.dto.user.WishDTO;
 
 public interface WishService {
-    void addToWish(WishDTO wishDTO); // 위시리스트 추가
-    void removeFromWish(WishDTO wishDTO); // 위시리스트 삭제
+    Long addWish(WishDTO wishDTO);
 
+    void removeWish(Long id);
 }

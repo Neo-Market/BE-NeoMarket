@@ -1,17 +1,16 @@
 package com.neo.neomarket.controller;
 
 import com.neo.neomarket.dto.usedPost.UsedPostCreateDTO;
-import com.neo.neomarket.dto.usedPost.UsedPostDTO;
-import com.neo.neomarket.dto.usedPost.UsedPostIdDTO;
+import com.neo.neomarket.dto.usedPost.UsedPostShowDTO;
+import com.neo.neomarket.dto.usedPost.UsedPostDetailDTO;
 import com.neo.neomarket.dto.usedPost.UsedPostUpdateDTO;
-import com.neo.neomarket.exception.CustomException;
 import com.neo.neomarket.service.UsedPostService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import org.springframework.web.multipart.MultipartFile;
 
 @RequiredArgsConstructor
 @RestController
@@ -20,47 +19,42 @@ public class UsedPostController {
 
     private final UsedPostService usedPostService;
 
-    // 전체 게시글 조회 엔드포인트
     @GetMapping("/used/list")
-    public ResponseEntity<List<UsedPostDTO>> getUsedList() {
-        List<UsedPostDTO> postList = usedPostService.getUsedPosts();
-
-        return ResponseEntity.ok().body(postList);
+    public ResponseEntity<List<UsedPostShowDTO>> getUsedPostList() {
+        List<UsedPostShowDTO> usedPostShowDTOList = usedPostService.getUsedPosts();
+        return ResponseEntity.ok(usedPostShowDTOList);
     }
 
-    // ID로 게시글 조회
     @GetMapping("/used/{id}")
-    public ResponseEntity<UsedPostIdDTO> findPostById(@PathVariable(name = "id") Long id) {
-        UsedPostIdDTO findPost = usedPostService.findPostById(id);
-
-        return ResponseEntity.ok().body(findPost);
+    public ResponseEntity<UsedPostDetailDTO> findUsedPostById(@PathVariable Long id) {
+        UsedPostDetailDTO usedPostDetailDTO = usedPostService.findUsedPostById(id);
+        return ResponseEntity.ok(usedPostDetailDTO);
     }
 
-    // 게시글 생성
     @PostMapping("/used")
-    public ResponseEntity<UsedPostCreateDTO> createPost(@RequestBody UsedPostCreateDTO usedPostCreateDTO ) {
-        UsedPostCreateDTO createdPost = usedPostService.createPost(usedPostCreateDTO);
+    public ResponseEntity<Long> createUsedPost(@RequestBody UsedPostCreateDTO usedPostCreateDTO,
+                                               @RequestParam("pictures") List<MultipartFile> pictures) {
+        Long createdPost = usedPostService.createUsedPost(usedPostCreateDTO, pictures);
 
-        return ResponseEntity.ok().body(createdPost);
+        return ResponseEntity.ok(createdPost);
     }
 
-    // 게시글 수정
     @PutMapping("used/{id}")
-    public ResponseEntity<Void> updatePost(@PathVariable Long id, @RequestBody UsedPostUpdateDTO usedPostUpdateDTO) {
-        try {
-            usedPostService.updatePost(id, usedPostUpdateDTO);
-            return new ResponseEntity<>(HttpStatus.OK);
-        } catch (CustomException e) {
-            // 예외 발생 시, 예외에 맞는 상태 코드 반환
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<Void> updateUsedPost(@PathVariable Long id,
+                                               @RequestBody UsedPostUpdateDTO usedPostUpdateDTO) {
+        usedPostService.updateUsedPost(id, usedPostUpdateDTO);
+
+        return ResponseEntity
+                .noContent()
+                .build();
     }
 
-    // 게시글 삭제
     @DeleteMapping("used/{id}")
-    public ResponseEntity<Void> deletePost(@PathVariable(name = "id") Long id) {
-        usedPostService.deletePost(id);
+    public ResponseEntity<Void> deleteUsedPost(@PathVariable Long id) {
+        usedPostService.deleteUsedPost(id);
 
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return ResponseEntity
+                .noContent()
+                .build();
     }
 }

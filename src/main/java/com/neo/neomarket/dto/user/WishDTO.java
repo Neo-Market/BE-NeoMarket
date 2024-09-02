@@ -1,14 +1,18 @@
-package com.neo.neomarket.dto;
+package com.neo.neomarket.dto.user;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class WishDTO {
+
+    private Long id;
 
     @Schema(description = "유저 id")
     private Long userId;
@@ -17,6 +21,6 @@ public class WishDTO {
     private Long postId;
 
     @Schema(description = "게시글 타입")
-    private Long postType;
+    private String postType; // 경매, 중고
 
 }

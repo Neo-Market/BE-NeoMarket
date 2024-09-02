@@ -1,6 +1,6 @@
 package com.neo.neomarket.controller;
 
-import com.neo.neomarket.dto.RecentPostDTO;
+import com.neo.neomarket.dto.home.RecentPostShowDTO;
 import com.neo.neomarket.service.HomeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,8 +17,8 @@ public class HomeController {
     private final HomeService homeService;
 
     @GetMapping("/home")
-    ResponseEntity<List<RecentPostDTO>> getRecentPosts(){
-        List<RecentPostDTO> posts = homeService.getRecentPosts();
+    ResponseEntity<List<RecentPostShowDTO>> getRecentPosts(){
+        List<RecentPostShowDTO> posts = homeService.getRecentPosts();
         return ResponseEntity.ok(posts);
     }
 

@@ -21,7 +21,7 @@ public class PictureEntity {
     private String url;
 
     @ManyToOne
-    @JoinColumn(name = "action_post_id")
+    @JoinColumn(name = "auction_post_id")
     private AuctionPostEntity auctionPost;
 
     @ManyToOne

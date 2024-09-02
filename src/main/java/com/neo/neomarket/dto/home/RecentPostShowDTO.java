@@ -1,17 +1,20 @@
-package com.neo.neomarket.dto;
+package com.neo.neomarket.dto.home;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class RecentPostDTO {
+public class RecentPostShowDTO {
+
     private Long postId;
     private String postType;
     private String postTitle;
@@ -19,5 +22,5 @@ public class RecentPostDTO {
     private String imgUrl;
     private Long wish;
     private LocalDateTime createdDate;
-}
 
+}

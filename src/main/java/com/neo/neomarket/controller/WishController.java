@@ -1,41 +1,39 @@
 package com.neo.neomarket.controller;
 
-import com.neo.neomarket.dto.WishDTO;
+import com.neo.neomarket.dto.user.WishDTO;
 import com.neo.neomarket.service.WishService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import java.net.URI;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
 @RequestMapping("/api")
+@RequiredArgsConstructor
 public class WishController {
 
-    @Autowired
-    private WishService wishService;
+    private final WishService wishService;
 
-    @PostMapping("/auction/wish")
-    public ResponseEntity<String> addToWishAuction( @RequestBody WishDTO wishDTO) {
-        wishService.addToWish(wishDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body("Added to wishlist");
+    @PostMapping("/wish")
+    public ResponseEntity<Void> addWishPost(@RequestBody WishDTO wishDTO, UriComponentsBuilder uriComponentsBuilder) {
+        Long wishId = wishService.addWish(wishDTO);
+        URI location = uriComponentsBuilder.path("/wish/{id}")
+                .buildAndExpand(wishId)
+                .toUri();
+
+        return ResponseEntity
+                .created(location)
+                .build();
     }
 
-    @PostMapping("/used/wish")
-    public ResponseEntity<String> addToWishUsed(@RequestBody WishDTO wishDTO) {
-        wishService.addToWish(wishDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body("Added to wishlist");
-    }
+    @DeleteMapping("/wish/{id}")
+    public ResponseEntity<Void> removeWishPost(@PathVariable Long id) {
+        wishService.removeWish(id);
 
-    @DeleteMapping("/auction/wish")
-    public ResponseEntity<String> removeFromWishAuction( @RequestBody WishDTO wishDTO) {
-        wishService.removeFromWish(wishDTO);
-        return ResponseEntity.ok("Removed from wishlist");
-    }
-
-    @DeleteMapping("/used/wish")
-    public ResponseEntity<String> removeFromWishUsed( @RequestBody WishDTO wishDTO) {
-        wishService.removeFromWish(wishDTO);
-        return ResponseEntity.ok("Removed from wishlist");
+        return ResponseEntity
+                .noContent()
+                .build();
     }
 
 }

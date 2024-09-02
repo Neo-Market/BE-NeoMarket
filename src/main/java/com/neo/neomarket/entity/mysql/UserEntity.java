@@ -1,5 +1,6 @@
 package com.neo.neomarket.entity.mysql;
 
+import com.neo.neomarket.dto.user.UserInfoDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,6 +20,7 @@ import java.util.List;
 @Entity
 @Table(name = "USER")
 public class UserEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -51,19 +53,33 @@ public class UserEntity {
     @Column(nullable = false)
     private Long point = 0L;
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user")
-    private final List<AuctionPostEntity> auctionPostEntities =new ArrayList<>();
+    private final List<AuctionPostEntity> auctionPostEntities = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user")
-    private final List<WishEntity> wishes =new ArrayList<>();
+    private final List<WishEntity> wishes = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user")
-    private final List<UsedPostEntity> usedPosts  =new ArrayList<>();
+    private final List<UsedPostEntity> usedPosts = new ArrayList<>();
 
-    public void chargePoint(Long neoPoint){
+    public void chargePoint(Long neoPoint) {
         this.point += neoPoint;
     }
 
-    public void exchangePoint(Long neoPoint){
+    public void exchangePoint(Long neoPoint) {
         this.point -= neoPoint;
+    }
+
+    public UserInfoDTO toUserInfoDTO() {
+        return UserInfoDTO.builder()
+                .id(this.id)
+                .name(this.name)
+                .email(this.email)
+                .picture(this.picture)
+                .nickname(this.nickname)
+                .address(this.address)
+                .accountNumber(this.accountNumber)
+                .bankName(this.bankName)
+                .point(this.point)
+                .build();
     }
 }
