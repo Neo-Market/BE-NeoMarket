@@ -4,24 +4,19 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-// 전체 게시물 조회 DTO
-public class UsedPostDTO  {
+public class UsedPostShowDTO {
+
     private Long id;
-
     private String title;
-
     private Long price;
-
-    private String pictures;
-
+    private String picture;
     private String nickname;
-
     private LocalDateTime createTime;
-
     private String category;
 
 }
