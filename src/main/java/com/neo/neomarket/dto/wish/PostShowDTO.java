@@ -1,4 +1,4 @@
-package com.neo.neomarket.dto.home;
+package com.neo.neomarket.dto.wish;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,7 +20,8 @@ public class PostShowDTO {
     private String postTitle;
     private Long price;
     private String imgUrl;
-    private Long wish;
+    private Long wishSize;
+    private String nickname;
     private LocalDateTime createdDate;
 
 }
