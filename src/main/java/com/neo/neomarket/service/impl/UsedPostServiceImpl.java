@@ -6,7 +6,7 @@ import com.neo.neomarket.dto.usedPost.UsedPostDetailDTO;
 import com.neo.neomarket.dto.usedPost.UsedPostUpdateDTO;
 import com.neo.neomarket.entity.mysql.PictureEntity;
 import com.neo.neomarket.entity.mysql.UsedPostEntity;
-import com.neo.neomarket.entity.mysql.UserEntity;
+import com.neo.neomarket.entity.mysql.user.UserEntity;
 import com.neo.neomarket.exception.CustomException;
 import com.neo.neomarket.exception.ErrorCode;
 import com.neo.neomarket.repository.mysql.PictureRepository;
@@ -14,6 +14,7 @@ import com.neo.neomarket.repository.mysql.UsedPostRepository;
 import com.neo.neomarket.repository.mysql.UserRepository;
 import com.neo.neomarket.repository.mysql.WishRepository;
 import com.neo.neomarket.service.UsedPostService;
+import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +31,7 @@ public class UsedPostServiceImpl implements UsedPostService {
     private final WishRepository wishRepository;
     private final UserRepository userRepository;
     private final PictureRepository pictureRepository;
+    private final S3FileUploadService s3FileUploadService;
 
     @Override
     @Transactional(readOnly = true)
@@ -58,21 +60,35 @@ public class UsedPostServiceImpl implements UsedPostService {
 
     @Override
     @Transactional
-    public Long createUsedPost(UsedPostCreateDTO usedPostCreateDTO, List<MultipartFile> pictures) {
+    public Long createUsedPost(UsedPostCreateDTO usedPostCreateDTO, MultipartFile file) {
         UserEntity user = userRepository.findById(usedPostCreateDTO.getUserId())
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_USER));
 
-        UsedPostEntity usedPostEntity = UsedPostEntity.builder().title(usedPostCreateDTO.getTitle())
-                .category(usedPostCreateDTO.getCategory()).content(usedPostCreateDTO.getContent())
-                .price(usedPostCreateDTO.getPrice()).user(user).build();
+        UsedPostEntity usedPostEntity = UsedPostEntity.builder()
+                .title(usedPostCreateDTO.getTitle())
+                .category(usedPostCreateDTO.getCategory())
+                .content(usedPostCreateDTO.getContent())
+                .price(usedPostCreateDTO.getPrice())
+                .user(user)
+                .build();
 
-        usedPostCreateDTO.getPictureUrls().forEach(pictureUrl -> {
-            PictureEntity pictureEntity = PictureEntity.builder().url(pictureUrl).build();
-            usedPostEntity.getPictures().add(pictureEntity);
-        });
+        UsedPostEntity createdPost = usedPostRepository.save(usedPostEntity);
 
-        UsedPostEntity created = usedPostRepository.save(usedPostEntity);
-        return created.getId();
+        String pictureUrl;
+        try {
+            pictureUrl = s3FileUploadService.uploadFile(file);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        PictureEntity pictureEntity = PictureEntity.builder()
+                .url(pictureUrl)
+                .usedPost(usedPostEntity)  // 관계 설정
+                .build();
+
+        pictureRepository.save(pictureEntity);
+
+        return createdPost.getId();
     }
 
     @Override
