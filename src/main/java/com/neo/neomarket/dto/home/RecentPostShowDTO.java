@@ -20,7 +20,8 @@ public class RecentPostShowDTO {
     private String postTitle;
     private Long price;
     private String imgUrl;
-    private Long wish;
+    private Long wishSize;
+    private String nickname;
     private LocalDateTime createdDate;
 
 }

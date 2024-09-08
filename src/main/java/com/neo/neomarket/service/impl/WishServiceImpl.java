@@ -1,15 +1,16 @@
 package com.neo.neomarket.service.impl;
 
-import com.neo.neomarket.dto.user.WishDTO;
-import com.neo.neomarket.entity.mysql.WishEntity;
-import com.neo.neomarket.entity.mysql.UserEntity;
+import com.neo.neomarket.dto.wish.PostShowDTO;
+import com.neo.neomarket.dto.wish.WishDTO;
 import com.neo.neomarket.entity.mysql.AuctionPostEntity;
 import com.neo.neomarket.entity.mysql.UsedPostEntity;
+import com.neo.neomarket.entity.mysql.WishEntity;
+import com.neo.neomarket.entity.mysql.user.UserEntity;
 import com.neo.neomarket.exception.CustomException;
 import com.neo.neomarket.exception.ErrorCode;
-import com.neo.neomarket.repository.mysql.UserRepository;
 import com.neo.neomarket.repository.mysql.AuctionPostRepository;
 import com.neo.neomarket.repository.mysql.UsedPostRepository;
+import com.neo.neomarket.repository.mysql.UserRepository;
 import com.neo.neomarket.repository.mysql.WishRepository;
 import com.neo.neomarket.service.WishService;
 import lombok.RequiredArgsConstructor;
@@ -37,19 +38,13 @@ public class WishServiceImpl implements WishService {
             AuctionPostEntity auctionPost = auctionPostRepository.findById(wishDTO.getPostId())
                     .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_POST));
 
-            wishEntity = WishEntity.builder()
-                    .user(user)
-                    .auctionPost(auctionPost)
-                    .build();
+            wishEntity = WishEntity.builder().user(user).auctionPost(auctionPost).build();
 
         } else if (wishDTO.getPostType().equals("중고")) {
             UsedPostEntity usedPost = usedPostRepository.findById(wishDTO.getPostId())
                     .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_POST));
 
-            wishEntity = WishEntity.builder()
-                    .user(user)
-                    .usedPost(usedPost)
-                    .build();
+            wishEntity = WishEntity.builder().user(user).usedPost(usedPost).build();
 
         } else {
             throw new CustomException(ErrorCode.NOT_EXIST_POSTTYPE);
@@ -67,4 +62,27 @@ public class WishServiceImpl implements WishService {
         wishRepository.delete(wishEntity);
     }
 
+    @Override
+    public PostShowDTO showWish(Long id) {
+        WishEntity wish = wishRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_WISHLIST));
+
+        PostShowDTO.PostShowDTOBuilder dtoBuilder = PostShowDTO.builder();
+
+        if (wish.getAuctionPost() != null) {
+            dtoBuilder.postId(wish.getAuctionPost().getId()).postType("경매").postTitle(wish.getAuctionPost().getTitle())
+                    .price(wish.getAuctionPost().getCurrentPrice())
+                    .imgUrl(wish.getAuctionPost().getPictures().isEmpty() ? null
+                            : wish.getAuctionPost().getPictures().get(0).getUrl())
+                    .wishSize((long) wish.getAuctionPost().getWishes().size())
+                    .createdDate(wish.getAuctionPost().getCreatedDate());
+        } else if (wish.getUsedPost() != null) {
+            dtoBuilder.postId(wish.getUsedPost().getId()).postType("중고").postTitle(wish.getUsedPost().getTitle())
+                    .price(wish.getUsedPost().getPrice()).imgUrl(wish.getUsedPost().getPictures().isEmpty() ? null
+                            : wish.getUsedPost().getPictures().get(0).getUrl())
+                    .wishSize((long) wish.getUsedPost().getWishes().size())
+                    .createdDate(wish.getUsedPost().getCreatedDate());
+        }
+        return dtoBuilder.build();
+    }
 }

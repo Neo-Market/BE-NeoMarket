@@ -4,7 +4,6 @@ import com.neo.neomarket.repository.mysql.UserRepository;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,28 +28,22 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
                                         Authentication authentication) throws IOException, ServletException {
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
 
-        // 세션에 OAuth2User 객체를 저장
-        HttpSession session = request.getSession();
-        session.setAttribute("oauthUser", oAuth2User);
-
         String email = oAuth2User.getAttribute("email");
-        String redirectUrl;
 
-        try {
-            if (email == null) {
-                throw new IllegalArgumentException("Email not provided by OAuth provider");
-            }
-
-            if (userRepository.findByEmail(email).isPresent()) {
-                redirectUrl = frontendUrl + "/";
-            } else {
-                redirectUrl = frontendUrl + "/register";
-            }
-        } catch (Exception e) {
-            // 에러 발생 시 프론트엔드의 에러 페이지로 리다이렉트
-            redirectUrl = "http://localhost:3000/login?error=" + e.getMessage();
-        }
+        String redirectUrl = determineRedirectUrl(email);
 
         getRedirectStrategy().sendRedirect(request, response, redirectUrl);
+    }
+
+    // 리다이렉트 URL 결정 로직 분리
+    private String determineRedirectUrl(String email) {
+        if (email == null) {
+            throw new IllegalArgumentException("Email not provided by OAuth provider");
+        }
+
+        // 사용자 회원가입 여부 확인
+        return userRepository.findByEmail(email).isPresent()
+                ? frontendUrl + "/"         // 회원가입 된 사용자는 홈으로
+                : frontendUrl + "/register"; // 회원가입 되지 않은 사용자는 회원가입 페이지로
     }
 }

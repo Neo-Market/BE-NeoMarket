@@ -1,5 +1,6 @@
-package com.neo.neomarket.entity.mysql;
+package com.neo.neomarket.entity.backup;
 
+import com.neo.neomarket.entity.mysql.user.Role;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;

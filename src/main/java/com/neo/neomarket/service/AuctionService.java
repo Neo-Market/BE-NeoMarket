@@ -14,7 +14,7 @@ public interface AuctionService {
 
     AuctionPostDetailDTO getAuctionPostById(Long id);
 
-    Long createAuctionPost(AuctionPostCreateDTO auctionPostCreateDTO, List<MultipartFile> pictures);
+    Long createAuctionPost(AuctionPostCreateDTO auctionPostCreateDTO, MultipartFile file);
 
     void deleteAuctionPost(Long id);
 

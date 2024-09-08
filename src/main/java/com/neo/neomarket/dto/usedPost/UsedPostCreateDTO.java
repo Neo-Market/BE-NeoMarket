@@ -1,6 +1,5 @@
 package com.neo.neomarket.dto.usedPost;
 
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,6 +18,6 @@ public class UsedPostCreateDTO {
     private Long price;
     private Long userId;
     private String category;
-    private List<String> pictureUrls;
+    private String picture;
 
 }

@@ -1,9 +1,11 @@
 package com.neo.neomarket.dto.auctionPost;
 
-import lombok.*;
-
 import java.time.LocalDateTime;
-import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Builder
@@ -13,12 +15,12 @@ import java.util.List;
 public class AuctionPostCreateDTO {
 
     private String title;
-    private List<String> pictureUrls;
     private String content;
     private Long startPrice;
     private Long currentPrice;
     private LocalDateTime deadline;
     private String category;
+    private String picture;
     private Long userId;
 
 }
