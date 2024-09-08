@@ -21,7 +21,7 @@ public class HomeServiceImpl implements HomeService {
     @Override
     @Transactional(readOnly = true)
     public List<RecentPostShowDTO> getRecentPosts() {
-        List<RecentPostShowDTO> auctionPosts = auctionPostRepository.findAllByOrderByLastModifiedDateDesc()
+        List<RecentPostShowDTO> auctionPosts = auctionPostRepository.findTop4ByOrderByLastModifiedDateDesc()
                 .stream()
                 .map(post -> RecentPostShowDTO.builder()
                         .postId(post.getId())
@@ -30,12 +30,13 @@ public class HomeServiceImpl implements HomeService {
                         .price(post.getCurrentPrice())
                         .imgUrl(post.getPictures().isEmpty() ? null
                                 : post.getPictures().get(0).getUrl())  // 첫 번째 이미지를 사용
-                        .wish((long) post.getWishes().size())
+                        .wishSize((long) post.getWishes().size())
+                        .nickname(post.getUser().getNickname())
                         .createdDate(post.getCreatedDate())
                         .build())
                 .toList();
 
-        List<RecentPostShowDTO> usedPosts = usedPostRepository.findAllByOrderByLastModifiedDateDesc()
+        List<RecentPostShowDTO> usedPosts = usedPostRepository.findTop4ByOrderByLastModifiedDateDesc()
                 .stream()
                 .map(post -> RecentPostShowDTO.builder()
                         .postId(post.getId())
@@ -44,14 +45,15 @@ public class HomeServiceImpl implements HomeService {
                         .price(post.getPrice())
                         .imgUrl(post.getPictures().isEmpty() ? null
                                 : post.getPictures().get(0).getUrl())  // 첫 번째 이미지를 사용
-                        .wish((long) post.getWishes().size())
+                        .wishSize((long) post.getWishes().size())
+                        .nickname(post.getUser().getNickname())
                         .createdDate(post.getCreatedDate())
                         .build())
                 .toList();
 
         return Stream.concat(auctionPosts.stream(), usedPosts.stream())
-                .sorted((p1, p2) -> p2.getCreatedDate().compareTo(p1.getCreatedDate()))  // createdAt 기준으로 내림차순 정렬
-                .limit(4)  // 상위 4개의 포스트만 가져옴
+              //  .sorted((p1, p2) -> p2.getCreatedDate().compareTo(p1.getCreatedDate()))  // createdAt 기준으로 내림차순 정렬
+              //  .limit(4)  // 상위 4개의 포스트만 가져옴
                 .toList();
     }
 }
