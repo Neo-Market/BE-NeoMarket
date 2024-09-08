@@ -1,15 +1,13 @@
-package com.neo.neomarket.entity.mysql;
+package com.neo.neomarket.entity.backup;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.neo.neomarket.entity.mysql.BaseTimeEntity;
+import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "USED_POST_BACKUP")
-public class UsedPostBackupEntity extends BaseTimeEntity {
+@Table(name="AUCTION_POST_BACKUP")
+public class AuctionPostBackupEntity  extends BaseTimeEntity {
     @Id
     private Long id;
 
@@ -19,11 +17,15 @@ public class UsedPostBackupEntity extends BaseTimeEntity {
     @Column(nullable = false)
     private String content;
 
-    @Column(nullable = false)
-    private Long price;
+    private Long startPrice;
+
+    private Long currentPrice;
 
     @Column(nullable = false)
     private Long views;
+
+    @Column(nullable = false)
+    private LocalDateTime deadline;
 
     private String category;
 

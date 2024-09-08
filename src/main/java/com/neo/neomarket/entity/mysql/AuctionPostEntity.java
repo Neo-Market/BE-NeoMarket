@@ -1,5 +1,6 @@
 package com.neo.neomarket.entity.mysql;
 
+import com.neo.neomarket.entity.mysql.user.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
 

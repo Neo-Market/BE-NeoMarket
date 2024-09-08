@@ -1,7 +1,7 @@
 package com.neo.neomarket.dto.user;
 
-import com.neo.neomarket.entity.mysql.Role;
-import com.neo.neomarket.entity.mysql.UserEntity;
+import com.neo.neomarket.entity.mysql.user.Role;
+import com.neo.neomarket.entity.mysql.user.UserEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -26,12 +26,12 @@ public class UserSaveDTO {
 
     private Long point;
 
-    public UserEntity toEntity(OAuth2User principal) {
+    public UserEntity toEntity(OAuth2User oAuth2User) {
 
         return UserEntity.builder()
-                .name(principal.getAttribute("name"))
-                .email(principal.getAttribute("email"))
-                .picture(principal.getAttribute("picture"))
+                .name(oAuth2User.getAttribute("name"))
+                .email(oAuth2User.getAttribute("email"))
+                .picture(oAuth2User.getAttribute("picture"))
                 .nickname(this.nickname)
                 .address(this.address)
                 .accountNumber(this.accountNumber)

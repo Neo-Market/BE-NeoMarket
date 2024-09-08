@@ -1,5 +1,6 @@
 package com.neo.neomarket.dto.user;
 
+import com.neo.neomarket.entity.mysql.user.UserEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -38,5 +39,20 @@ public class UserInfoDTO {
 
     @Schema(description = "유저 네오 포인트")
     private Long point;
+
+    public static UserInfoDTO from(UserEntity userEntity) {
+
+        return UserInfoDTO.builder()
+                .id(userEntity.getId())
+                .name(userEntity.getName())
+                .email(userEntity.getEmail())
+                .picture(userEntity.getPicture())
+                .nickname(userEntity.getNickname())
+                .address(userEntity.getAddress())
+                .accountNumber(userEntity.getAccountNumber())
+                .bankName(userEntity.getBankName())
+                .point(userEntity.getPoint())
+                .build();
+    }
 
 }

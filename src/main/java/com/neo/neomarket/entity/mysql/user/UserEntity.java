@@ -1,6 +1,8 @@
-package com.neo.neomarket.entity.mysql;
+package com.neo.neomarket.entity.mysql.user;
 
-import com.neo.neomarket.dto.user.UserInfoDTO;
+import com.neo.neomarket.entity.mysql.AuctionPostEntity;
+import com.neo.neomarket.entity.mysql.UsedPostEntity;
+import com.neo.neomarket.entity.mysql.WishEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -52,6 +54,7 @@ public class UserEntity {
     @Builder.Default
     @Column(nullable = false)
     private Long point = 0L;
+
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user")
     private final List<AuctionPostEntity> auctionPostEntities = new ArrayList<>();
 
@@ -69,17 +72,4 @@ public class UserEntity {
         this.point -= neoPoint;
     }
 
-    public UserInfoDTO toUserInfoDTO() {
-        return UserInfoDTO.builder()
-                .id(this.id)
-                .name(this.name)
-                .email(this.email)
-                .picture(this.picture)
-                .nickname(this.nickname)
-                .address(this.address)
-                .accountNumber(this.accountNumber)
-                .bankName(this.bankName)
-                .point(this.point)
-                .build();
-    }
 }
