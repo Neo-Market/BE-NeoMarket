@@ -1,11 +1,11 @@
 package com.neo.neomarket.service.impl;
 
-import com.neo.neomarket.dto.home.PostShowDTO;
+import com.neo.neomarket.dto.wish.PostShowDTO;
 import com.neo.neomarket.dto.user.ExchangeNeoPayDTO;
 import com.neo.neomarket.dto.user.UserExchangeLogDTO;
 import com.neo.neomarket.dto.user.UserInfoDTO;
 import com.neo.neomarket.dto.user.UserSaveDTO;
-import com.neo.neomarket.entity.mysql.UserEntity;
+import com.neo.neomarket.entity.mysql.user.UserEntity;
 import com.neo.neomarket.exception.CustomException;
 import com.neo.neomarket.exception.ErrorCode;
 import com.neo.neomarket.repository.mysql.UserRepository;
@@ -28,25 +28,25 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public Long createUser(OAuth2User principal, UserSaveDTO userSaveDTO) {
-        return userRepository.save(userSaveDTO.toEntity(principal)).getId();
+    public Long createUser(OAuth2User oAuth2User, UserSaveDTO userSaveDTO) {
+        return userRepository.save(userSaveDTO.toEntity(oAuth2User)).getId();
     }
 
     @Override
-    public UserInfoDTO getCurrentUserInfo(OAuth2User principal) {
-        String email = principal.getAttribute("email");
-        UserEntity user = userRepository.findByEmail(email)
+    public UserInfoDTO getUserInfo(OAuth2User oAuth2User) {
+        String email = oAuth2User.getAttribute("email");
+        UserEntity userEntity = userRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_USER));
 
-        return user.toUserInfoDTO();
+        return UserInfoDTO.from(userEntity);
     }
 
     @Override
-    public UserInfoDTO getUserInfo(OAuth2User principal, Long id) {
-        UserEntity user = userRepository.findById(id)
+    public UserInfoDTO getUserInfoByEmail(String email) {
+        UserEntity userEntity = userRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_USER));
 
-        return user.toUserInfoDTO();
+        return UserInfoDTO.from(userEntity);
     }
 
     @Override
@@ -67,7 +67,8 @@ public class UserServiceImpl implements UserService {
                         .price(wish.getAuctionPost().getCurrentPrice())
                         .imgUrl(wish.getAuctionPost().getPictures().isEmpty() ? null
                                 : wish.getAuctionPost().getPictures().get(0).getUrl())
-                        .wish((long) wish.getAuctionPost().getWishes().size())
+                        .wishSize((long) wish.getAuctionPost().getWishes().size())
+                        .nickname(wish.getUser().getNickname())
                         .createdDate(wish.getAuctionPost().getCreatedDate());
             } else if (wish.getUsedPost() != null) {
                 dtoBuilder.postId(wish.getUsedPost().getId())
@@ -76,7 +77,8 @@ public class UserServiceImpl implements UserService {
                         .price(wish.getUsedPost().getPrice())
                         .imgUrl(wish.getUsedPost().getPictures().isEmpty() ? null
                                 : wish.getUsedPost().getPictures().get(0).getUrl())
-                        .wish((long) wish.getUsedPost().getWishes().size())
+                        .wishSize((long) wish.getUsedPost().getWishes().size())
+                        .nickname(wish.getUser().getNickname())
                         .createdDate(wish.getUsedPost().getCreatedDate());
             }
 

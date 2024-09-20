@@ -13,7 +13,7 @@ public interface UsedPostService {
 
     UsedPostDetailDTO findUsedPostById(Long id);
 
-    Long createUsedPost(UsedPostCreateDTO usedPostCreateDTO, List<MultipartFile> pictures);
+    Long createUsedPost(UsedPostCreateDTO usedPostCreateDTO, MultipartFile file);
 
     void updateUsedPost(Long id, UsedPostUpdateDTO usedPostUpdateDTO);
 

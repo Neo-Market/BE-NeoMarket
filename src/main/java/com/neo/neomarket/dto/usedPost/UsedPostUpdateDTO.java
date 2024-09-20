@@ -1,7 +1,7 @@
 package com.neo.neomarket.dto.usedPost;
 
 import com.neo.neomarket.entity.mysql.UsedPostEntity;
-import com.neo.neomarket.entity.mysql.UserEntity;
+import com.neo.neomarket.entity.mysql.user.UserEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

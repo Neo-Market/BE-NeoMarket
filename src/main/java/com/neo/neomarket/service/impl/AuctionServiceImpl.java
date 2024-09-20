@@ -8,7 +8,7 @@ import com.neo.neomarket.dto.bid.BidRequestDTO;
 import com.neo.neomarket.entity.elasticsearch.AuctionLogEntity;
 import com.neo.neomarket.entity.mysql.AuctionPostEntity;
 import com.neo.neomarket.entity.mysql.PictureEntity;
-import com.neo.neomarket.entity.mysql.UserEntity;
+import com.neo.neomarket.entity.mysql.user.UserEntity;
 import com.neo.neomarket.exception.CustomException;
 import com.neo.neomarket.exception.ErrorCode;
 import com.neo.neomarket.repository.elasticsearch.AuctionLogRepository;
@@ -16,6 +16,7 @@ import com.neo.neomarket.repository.mysql.AuctionPostRepository;
 import com.neo.neomarket.repository.mysql.PictureRepository;
 import com.neo.neomarket.repository.mysql.UserRepository;
 import com.neo.neomarket.service.AuctionService;
+import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +36,7 @@ public class AuctionServiceImpl implements AuctionService {
     private final UserRepository userRepository;
     private final PictureRepository pictureRepository;
     private final AuctionLogRepository auctionLogRepository;
+    private final S3FileUploadService s3FileUploadService;
 
     @Override
     @Transactional(readOnly = true)
@@ -73,7 +75,7 @@ public class AuctionServiceImpl implements AuctionService {
 
     @Override
     @Transactional
-    public Long createAuctionPost(AuctionPostCreateDTO auctionPostCreateDTO, List<MultipartFile> pictures) {
+    public Long createAuctionPost(AuctionPostCreateDTO auctionPostCreateDTO, MultipartFile file) {
         UserEntity user = userRepository.findById(auctionPostCreateDTO.getUserId())
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_USER));
 
@@ -87,13 +89,23 @@ public class AuctionServiceImpl implements AuctionService {
                 .user(user)
                 .build();
 
-        auctionPostCreateDTO.getPictureUrls().forEach(pictureUrl -> {
-            PictureEntity pictureEntity = PictureEntity.builder().url(pictureUrl).build();
-            auctionPostEntity.getPictures().add(pictureEntity);
-        });
+        AuctionPostEntity createdPost = auctionPostRepository.save(auctionPostEntity);
 
-        AuctionPostEntity created = auctionPostRepository.save(auctionPostEntity);
-        return created.getId();
+        String pictureUrl;
+        try {
+            pictureUrl = s3FileUploadService.uploadFile(file);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        PictureEntity pictureEntity = PictureEntity.builder()
+                .url(pictureUrl)
+                .auctionPost(auctionPostEntity)  // 관계 설정
+                .build();
+
+        pictureRepository.save(pictureEntity);
+
+        return createdPost.getId();
     }
 
     @Override
@@ -123,7 +135,8 @@ public class AuctionServiceImpl implements AuctionService {
             throw new CustomException(ErrorCode.INSUFFICIENT_BALANCE);
         }
 
-        BidLogDTO bidLogDTO = BidLogDTO.builder().bidAmount(bidRequestDTO.getBidAmount()).category(post.getCategory())
+        BidLogDTO bidLogDTO = BidLogDTO.builder().bidAmount(bidRequestDTO.getBidAmount())
+                .category(post.getCategory())
                 .postId(post.getId()).userId(user.getId()).build();
 
         recordBidLog(bidLogDTO);

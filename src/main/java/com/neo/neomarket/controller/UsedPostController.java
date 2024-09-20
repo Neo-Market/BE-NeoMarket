@@ -29,12 +29,13 @@ public class UsedPostController {
     public ResponseEntity<UsedPostDetailDTO> findUsedPostById(@PathVariable Long id) {
         UsedPostDetailDTO usedPostDetailDTO = usedPostService.findUsedPostById(id);
         return ResponseEntity.ok(usedPostDetailDTO);
+
     }
 
     @PostMapping("/used")
-    public ResponseEntity<Long> createUsedPost(@RequestBody UsedPostCreateDTO usedPostCreateDTO,
-                                               @RequestParam("pictures") List<MultipartFile> pictures) {
-        Long createdPost = usedPostService.createUsedPost(usedPostCreateDTO, pictures);
+    public ResponseEntity<Long> createUsedPost(@RequestPart("createDto") UsedPostCreateDTO usedPostCreateDTO,
+                                               @RequestPart("file") MultipartFile file) {
+        Long createdPost = usedPostService.createUsedPost(usedPostCreateDTO, file);
 
         return ResponseEntity.ok(createdPost);
     }

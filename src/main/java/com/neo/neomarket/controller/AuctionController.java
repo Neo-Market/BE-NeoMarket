@@ -4,6 +4,7 @@ import com.neo.neomarket.dto.auctionPost.AuctionPostCreateDTO;
 import com.neo.neomarket.dto.auctionPost.AuctionPostShowDTO;
 import com.neo.neomarket.dto.auctionPost.AuctionPostDetailDTO;
 import com.neo.neomarket.dto.bid.BidRequestDTO;
+import com.neo.neomarket.dto.usedPost.UsedPostCreateDTO;
 import com.neo.neomarket.service.AuctionService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -37,9 +38,9 @@ public class AuctionController {
 
     @PostMapping("/auction")
     public ResponseEntity<Long> createAuction(
-            @RequestParam("auctionPost") AuctionPostCreateDTO auctionPostCreateDTO,
-            @RequestParam("pictures") List<MultipartFile> pictures) {
-        Long createdPost = auctionService.createAuctionPost(auctionPostCreateDTO, pictures);
+            @RequestPart("createDto") AuctionPostCreateDTO auctionPostCreateDTO,
+            @RequestPart("file") MultipartFile file) {
+        Long createdPost = auctionService.createAuctionPost(auctionPostCreateDTO, file);
         return ResponseEntity.ok(createdPost);
     }
 
@@ -53,14 +54,14 @@ public class AuctionController {
     }
 
     @PostMapping("/auction/bid")
-    ResponseEntity<Void> bidAuction(@RequestBody BidRequestDTO bidRequestDTO){
+    ResponseEntity<Void> bidAuction(@RequestBody BidRequestDTO bidRequestDTO) {
         auctionService.bidAction(bidRequestDTO);
 
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/auction/bid/success")
-    ResponseEntity<Void> bidAuctionSuccess(@RequestParam(name = "id")Long postId){
+    ResponseEntity<Void> bidAuctionSuccess(@RequestParam(name = "id") Long postId) {
         auctionService.bidSuccessAction(postId);
 
         return ResponseEntity.ok().build();

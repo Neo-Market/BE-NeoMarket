@@ -1,9 +1,9 @@
 package com.neo.neomarket.entity.mysql;
 
+import com.neo.neomarket.entity.mysql.user.UserEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
