@@ -26,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -139,6 +140,24 @@ public class AuctionServiceImpl implements AuctionService {
                 .postId(post.getId()).userId(user.getId()).build();
 
         recordBidLog(bidLogDTO);
+
+        // 특정 postId에 대한 가장 최신 입찰 로그 조회
+        Optional<AuctionLogEntity> currentTopBidOptional = auctionLogRepository.findTopByPostIdOrderByBidAmountDesc(post.getId());
+
+        if (currentTopBidOptional.isPresent()) {
+            AuctionLogEntity currentTopBid = currentTopBidOptional.get();
+
+            // 현재 최고 입찰자에게 포인트를 반환하는 로직
+            if (!currentTopBid.getUserId().equals(user.getId())) {
+                UserEntity currentTopBidder = userRepository.findById(currentTopBid.getUserId())
+                        .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_USER));
+
+                // 포인트 추가
+                currentTopBidder.chargePoint(currentTopBid.getBidAmount());
+                userRepository.save(currentTopBidder);  // 변경된 사용자 저장
+            }
+        }
+
 
         user.exchangePoint(bidRequestDTO.getBidAmount());
         post.setCurrentPrice(bidRequestDTO.getBidAmount());
