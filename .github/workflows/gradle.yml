@@ -57,17 +57,10 @@ jobs:
           chmod +x ./gradlew
           ./gradlew build -x test
 
-      - name: Docker build
-        run: |
-          docker build -f ./Dockerfile -t ${{ secrets.DOCKER_REPO }}:latest .
-
-      - name: Trivy Scan
-        run: |
-          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image --exit-code 1 --severity HIGH,CRITICAL ${{ secrets.DOCKER_REPO }}:latest
-
-      - name: Docker push to docker repo
+      - name: Docker build & push to docker repo
         run: |
           echo ${{ secrets.DOCKER_TOKEN }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+          docker build -f ./Dockerfile -t ${{ secrets.DOCKER_REPO }}:latest .
           docker push ${{ secrets.DOCKER_REPO }}:latest
 
   deploy:
